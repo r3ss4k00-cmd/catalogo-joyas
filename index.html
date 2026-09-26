@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Joyas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      background-color: #fdf8f2;
+      margin: 0;
+      padding: 0;
+      color: #444;
+    }
+
+    .barra-superior {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 14px 20px;
+    }
+
+    .contenido {
+      padding: 50px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 2.3em;
+      color: #3d2e22;
+      margin: 0 0 6px 0;
+    }
+
+    .subtitulo {
+      font-size: 0.75em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #a08b73;
+      margin: 0;
+    }
+
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 28px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .tarjeta {
+      background-color: white;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tarjeta:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .tarjeta img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .info {
+      padding: 15px;
+    }
+
+    .nombre {
+      font-size: 1.05em;
+      font-weight: 500;
+      margin: 0 0 6px 0;
+      color: #2b2b2b;
+    }
+
+    .precio {
+      color: #a08b73;
+      font-size: 1em;
+      margin: 0 0 12px 0;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 15px;
+      font-size: 0.7em;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .disponible {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .vendida {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .reservada {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .filtro {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      max-width: 1000px;
+      margin: 0 auto;
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ddd;
+      border-radius: 22px;
+      transition: background-color 0.2s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .switch input:checked + .slider {
+      background-color: #7a5c3e;
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(18px);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.75);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal.activo {
+      display: flex;
+    }
+
+    .modal-contenido {
+      position: relative;
+      background-color: white;
+      border-radius: 8px;
+      padding: 24px;
+      width: 380px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    .modal-contenido img {
+      max-width: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 6px;
+      margin: 0 auto 16px auto;
+      display: block;
+    }
+
+    .modal-nombre {
+      font-size: 1.2em;
+      font-weight: 500;
+      color: #2b2b2b;
+      margin: 0 0 6px 0;
+    }
+
+    .modal-precio {
+      color: #a08b73;
+      margin: 0;
+    }
+
+    .cerrar {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.8em;
+      line-height: 1;
+      color: #999;
+      cursor: pointer;
+    }
+
+    .cerrar:hover {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="barra-superior">
+    <div class="filtro">
+      <span>Solo disponibles</span>
+      <label class="switch">
+        <input type="checkbox" id="filtroDisponibles">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="contenido">
+    <header>
+      <h1>Joyería Kalo</h1>
+      <p class="subtitulo">Catálogo</p>
+    </header>
+
+    <div class="catalogo" id="catalogo"></div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-contenido">
+      <button class="cerrar" id="cerrarModal">&times;</button>
+      <img id="modalImagen" src="" alt="">
+      <p class="modal-nombre" id="modalNombre"></p>
+      <p class="modal-precio" id="modalPrecio"></p>
+    </div>
+  </div>
+
+  <script>
+    const joyas = [
+      { nombre: "Anillo de plata", precio: "$8.500", imagen: 1, estado: "disponible" },
+      { nombre: "Collar de perlas", precio: "$12.000", imagen: 2, estado: "vendida" },
+      { nombre: "Aros de oro", precio: "$15.300", imagen: 3, estado: "disponible" },
+      { nombre: "Pulsera fina", precio: "$6.800", imagen: 4, estado: "reservada" },
+      { nombre: "Dije de corazón", precio: "$5.200", imagen: 5, estado: "vendida" }
+    ];
+
+    const etiquetas = {
+      disponible: "Disponible",
+      vendida: "Vendida",
+      reservada: "Reservada"
+    };
+
+    const contenedor = document.getElementById("catalogo");
+    const checkbox = document.getElementById("filtroDisponibles");
+
+    const modal = document.getElementById("modal");
+    const modalImagen = document.getElementById("modalImagen");
+    const modalNombre = document.getElementById("modalNombre");
+    const modalPrecio = document.getElementById("modalPrecio");
+    const botonCerrar = document.getElementById("cerrarModal");
+
+    function abrirModal(joya) {
+      modalImagen.src = `https://picsum.photos/500/500?random=${joya.imagen}`;
+      modalImagen.alt = joya.nombre;
+      modalNombre.textContent = joya.nombre;
+      modalPrecio.textContent = joya.precio;
+      modal.classList.add("activo");
+    }
+
+    function cerrarModal() {
+      modal.classList.remove("activo");
+    }
+
+    botonCerrar.addEventListener("click", cerrarModal);
+
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) {
+        cerrarModal();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        cerrarModal();
+      }
+    });
+
+    function renderJoyas(lista) {
+      contenedor.innerHTML = "";
+
+      lista.forEach(function (joya) {
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "tarjeta";
+
+        tarjeta.innerHTML = `
+          <img src="https://picsum.photos/300/300?random=${joya.imagen}" alt="${joya.nombre}">
+          <div class="info">
+            <p class="nombre">${joya.nombre}</p>
+            <p class="precio">${joya.precio}</p>
+            <span class="estado ${joya.estado}">${etiquetas[joya.estado]}</span>
+          </div>
+        `;
+
+        tarjeta.addEventListener("click", function () {
+          abrirModal(joya);
+        });
+
+        contenedor.appendChild(tarjeta);
+      });
+    }
+
+    checkbox.addEventListener("change", function () {
+      if (checkbox.checked) {
+        const disponibles = joyas.filter(function (joya) {
+          return joya.estado === "disponible";
+        });
+        renderJoyas(disponibles);
+      } else {
+        renderJoyas(joyas);
+      }
+    });
+
+    renderJoyas(joyas);
+  </script>
+
+</body>
+</html>
