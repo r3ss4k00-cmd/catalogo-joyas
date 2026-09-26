@@ -108,3 +108,27 @@
 ---
 
 **Dónde quedamos:** el catálogo lee las joyas desde Google Sheets (fetch + parseo de CSV), con mensajes de carga y error. La próxima sesión: decidir cómo van a alojar las fotos reales.
+
+## 26/09/2026 — Sesión 2
+
+### Cambios
+- Conecté el catálogo a Google Sheets: ahora las joyas se leen desde una planilla publicada en CSV, no del código.
+- La dueña puede agregar o borrar joyas editando directamente la planilla, sin tocar código.
+- Agregué la columna `id` en la planilla, para identificar cada joya de forma única. Todavía no se usa en el código, pero va a hacer falta cuando haga el panel de administración.
+- Agregué un fondo con una imagen delicada: un velo claro semitransparente superpuesto a la imagen, hecho con `linear-gradient`.
+
+### Conceptos que aprendí
+- **`fetch` y promesas (`.then`):** cómo pedirle datos a otro servidor que tardan en llegar, y encadenar "cuando lleguen, hacé esto" sin bloquear el resto de la página mientras se espera.
+- **Convertir CSV en objetos:** cómo tomar texto plano separado por comas y transformarlo en el mismo tipo de array de objetos que usaba el código antes.
+- **CORS:** por qué el catálogo no cargaba los datos al abrir `index.html` directo desde el disco (`file://`), pero sí funciona cuando se sirve por `https` (como en GitHub Pages). El navegador bloquea pedidos entre orígenes distintos salvo que el servidor lo permita explícitamente, y `file://` no cuenta como un origen válido para eso.
+- **IDs únicos:** un id tiene que ser permanente (no cambiar nunca para la misma joya), puede tener huecos en la numeración (si se borra una joya, ese número no se reutiliza), y nunca se reasigna a otra fila. Es la misma lógica que usan las bases de datos para identificar filas.
+- **Fondos en capas con CSS:** se pueden superponer varios fondos separados por coma (por ejemplo un `linear-gradient` semitransparente encima de una imagen) para lograr un velo sutil sin tener que editar la imagen original.
+- **Cómo funciona una VM (máquina virtual):** la configuración vive en el programa anfitrión (host), y el disco de la máquina virtual es un archivo `.vdi` aparte.
+
+### Próximos pasos pendientes
+- **Lo más importante:** subir fotos reales de las joyas y reemplazar los links de picsum.photos por las URLs reales.
+- Más adelante: un panel administrable con login y base de datos (esto es el "Camino 2", un proyecto grande a futuro).
+
+---
+
+**Dónde quedamos:** catálogo funcional y online, conectado a Google Sheets. El próximo paso natural es cargar las fotos reales de las joyas.
