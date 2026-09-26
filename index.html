@@ -460,7 +460,9 @@
           joya[encabezado] = valores[indice];
         });
 
-        resultado.push(joya);
+        if (joya.nombre) {
+          resultado.push(joya);
+        }
       }
 
       return resultado;
