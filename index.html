@@ -88,14 +88,8 @@
     .nombre {
       font-size: 1.05em;
       font-weight: 500;
-      margin: 0 0 6px 0;
-      color: #2b2b2b;
-    }
-
-    .precio {
-      color: #a08b73;
-      font-size: 1em;
       margin: 0 0 12px 0;
+      color: #2b2b2b;
     }
 
     .estado {
@@ -121,6 +115,52 @@
     .reservada {
       background-color: #fff3cd;
       color: #856404;
+    }
+
+    .categorias {
+      max-width: 1000px;
+      margin: 0 auto 35px auto;
+      text-align: center;
+    }
+
+    .fila-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .boton-categoria {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85em;
+      padding: 8px 18px;
+      border: 1px solid #d8c8b8;
+      border-radius: 20px;
+      background-color: white;
+      color: #5c4a3a;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .boton-categoria:hover {
+      background-color: #f3e9dd;
+    }
+
+    .boton-categoria.activo {
+      background-color: #7a5c3e;
+      border-color: #7a5c3e;
+      color: white;
+    }
+
+    .boton-volver {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8em;
+      background: none;
+      border: none;
+      color: #a08b73;
+      text-decoration: underline;
+      cursor: pointer;
     }
 
     .filtro {
@@ -227,11 +267,6 @@
       margin: 0 0 6px 0;
     }
 
-    .modal-precio {
-      color: #a08b73;
-      margin: 0;
-    }
-
     .cerrar {
       position: absolute;
       top: 8px;
@@ -267,6 +302,12 @@
       <p class="subtitulo">Catálogo</p>
     </header>
 
+    <div class="categorias">
+      <div class="fila-categorias" id="botonesTipo"></div>
+      <div class="fila-categorias" id="botonesMaterial" style="display: none;"></div>
+      <button class="boton-volver" id="botonVolver" style="display: none;">Ver todas las categorías</button>
+    </div>
+
     <div class="catalogo" id="catalogo"></div>
   </div>
 
@@ -275,18 +316,13 @@
       <button class="cerrar" id="cerrarModal">&times;</button>
       <img id="modalImagen" src="" alt="">
       <p class="modal-nombre" id="modalNombre"></p>
-      <p class="modal-precio" id="modalPrecio"></p>
     </div>
   </div>
 
   <script>
-    const joyas = [
-      { nombre: "Anillo de plata", precio: "$8.500", imagen: 1, estado: "disponible" },
-      { nombre: "Collar de perlas", precio: "$12.000", imagen: 2, estado: "vendida" },
-      { nombre: "Aros de oro", precio: "$15.300", imagen: 3, estado: "disponible" },
-      { nombre: "Pulsera fina", precio: "$6.800", imagen: 4, estado: "reservada" },
-      { nombre: "Dije de corazón", precio: "$5.200", imagen: 5, estado: "vendida" }
-    ];
+    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAC_qdJr0VEEpHaUNwoEZ6uTwQN4eVL9ybpvr05M0qbkXiW--lqFXc2Kv2fut0ZfEiG9zab2y82Zt-/pub?output=csv";
+
+    let joyas = [];
 
     const etiquetas = {
       disponible: "Disponible",
@@ -294,20 +330,33 @@
       reservada: "Reservada"
     };
 
+    const etiquetasTipo = {
+      anillo: "Anillos",
+      cadena: "Cadenas",
+      arito: "Aritos",
+      pulsera: "Pulseras",
+      dije: "Dijes"
+    };
+
     const contenedor = document.getElementById("catalogo");
     const checkbox = document.getElementById("filtroDisponibles");
+
+    const contenedorTipos = document.getElementById("botonesTipo");
+    const contenedorMateriales = document.getElementById("botonesMaterial");
+    const botonVolver = document.getElementById("botonVolver");
+
+    let tipoSeleccionado = null;
+    let materialSeleccionado = null;
 
     const modal = document.getElementById("modal");
     const modalImagen = document.getElementById("modalImagen");
     const modalNombre = document.getElementById("modalNombre");
-    const modalPrecio = document.getElementById("modalPrecio");
     const botonCerrar = document.getElementById("cerrarModal");
 
     function abrirModal(joya) {
       modalImagen.src = `https://picsum.photos/500/500?random=${joya.imagen}`;
       modalImagen.alt = joya.nombre;
       modalNombre.textContent = joya.nombre;
-      modalPrecio.textContent = joya.precio;
       modal.classList.add("activo");
     }
 
@@ -340,7 +389,6 @@
           <img src="https://picsum.photos/300/300?random=${joya.imagen}" alt="${joya.nombre}">
           <div class="info">
             <p class="nombre">${joya.nombre}</p>
-            <p class="precio">${joya.precio}</p>
             <span class="estado ${joya.estado}">${etiquetas[joya.estado]}</span>
           </div>
         `;
@@ -353,18 +401,183 @@
       });
     }
 
-    checkbox.addEventListener("change", function () {
+    function obtenerValoresUnicos(lista, propiedad) {
+      const valores = [];
+
+      lista.forEach(function (joya) {
+        if (!valores.includes(joya[propiedad])) {
+          valores.push(joya[propiedad]);
+        }
+      });
+
+      return valores;
+    }
+
+    function capitalizar(texto) {
+      return texto.charAt(0).toUpperCase() + texto.slice(1);
+    }
+
+    function dividirLineaCSV(linea) {
+      const valores = [];
+      let actual = "";
+      let dentroDeComillas = false;
+
+      for (let i = 0; i < linea.length; i++) {
+        const caracter = linea[i];
+
+        if (caracter === '"') {
+          dentroDeComillas = !dentroDeComillas;
+        } else if (caracter === "," && !dentroDeComillas) {
+          valores.push(actual.trim());
+          actual = "";
+        } else {
+          actual += caracter;
+        }
+      }
+
+      valores.push(actual.trim());
+      return valores;
+    }
+
+    function csvAJoyas(textoCSV) {
+      const lineas = textoCSV.trim().split(/\r?\n/);
+      const encabezados = dividirLineaCSV(lineas[0]);
+      const resultado = [];
+
+      for (let i = 1; i < lineas.length; i++) {
+        if (!lineas[i].trim()) continue;
+
+        const valores = dividirLineaCSV(lineas[i]);
+        const joya = {};
+
+        encabezados.forEach(function (encabezado, indice) {
+          joya[encabezado] = valores[indice];
+        });
+
+        resultado.push(joya);
+      }
+
+      return resultado;
+    }
+
+    let tipos = [];
+    let materiales = [];
+
+    function actualizarCatalogo() {
+      let lista = joyas;
+
+      if (tipoSeleccionado) {
+        lista = lista.filter(function (joya) {
+          return joya.tipo === tipoSeleccionado;
+        });
+      }
+
+      if (materialSeleccionado) {
+        lista = lista.filter(function (joya) {
+          return joya.material === materialSeleccionado;
+        });
+      }
+
       if (checkbox.checked) {
-        const disponibles = joyas.filter(function (joya) {
+        lista = lista.filter(function (joya) {
           return joya.estado === "disponible";
         });
-        renderJoyas(disponibles);
-      } else {
-        renderJoyas(joyas);
       }
+
+      renderJoyas(lista);
+    }
+
+    function actualizarBotonVolver() {
+      if (tipoSeleccionado || materialSeleccionado) {
+        botonVolver.style.display = "inline-block";
+      } else {
+        botonVolver.style.display = "none";
+      }
+    }
+
+    function renderBotonesTipo() {
+      contenedorTipos.innerHTML = "";
+
+      tipos.forEach(function (tipo) {
+        const boton = document.createElement("button");
+        boton.className = "boton-categoria";
+        boton.textContent = etiquetasTipo[tipo];
+
+        if (tipo === tipoSeleccionado) {
+          boton.classList.add("activo");
+        }
+
+        boton.addEventListener("click", function () {
+          tipoSeleccionado = tipo;
+          materialSeleccionado = null;
+          contenedorMateriales.style.display = "flex";
+          renderBotonesTipo();
+          renderBotonesMaterial();
+          actualizarBotonVolver();
+          actualizarCatalogo();
+        });
+
+        contenedorTipos.appendChild(boton);
+      });
+    }
+
+    function renderBotonesMaterial() {
+      contenedorMateriales.innerHTML = "";
+
+      materiales.forEach(function (material) {
+        const boton = document.createElement("button");
+        boton.className = "boton-categoria";
+        boton.textContent = capitalizar(material);
+
+        if (material === materialSeleccionado) {
+          boton.classList.add("activo");
+        }
+
+        boton.addEventListener("click", function () {
+          materialSeleccionado = material;
+          renderBotonesMaterial();
+          actualizarBotonVolver();
+          actualizarCatalogo();
+        });
+
+        contenedorMateriales.appendChild(boton);
+      });
+    }
+
+    botonVolver.addEventListener("click", function () {
+      tipoSeleccionado = null;
+      materialSeleccionado = null;
+      contenedorMateriales.style.display = "none";
+      renderBotonesTipo();
+      renderBotonesMaterial();
+      actualizarBotonVolver();
+      actualizarCatalogo();
     });
 
-    renderJoyas(joyas);
+    checkbox.addEventListener("change", actualizarCatalogo);
+
+    contenedor.innerHTML = "<p>Cargando joyas...</p>";
+
+    fetch(URL_CSV)
+      .then(function (respuesta) {
+        if (!respuesta.ok) {
+          throw new Error("Respuesta no exitosa: " + respuesta.status);
+        }
+        return respuesta.text();
+      })
+      .then(function (textoCSV) {
+        joyas = csvAJoyas(textoCSV);
+        tipos = obtenerValoresUnicos(joyas, "tipo");
+        materiales = obtenerValoresUnicos(joyas, "material");
+
+        renderBotonesTipo();
+        renderBotonesMaterial();
+        actualizarCatalogo();
+      })
+      .catch(function (error) {
+        console.error("Error al cargar las joyas:", error);
+        contenedor.innerHTML = "<p>No se pudieron cargar las joyas. Probá recargar la página.</p>";
+      });
   </script>
 
 </body>
