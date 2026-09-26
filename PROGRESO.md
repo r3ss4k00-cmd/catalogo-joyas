@@ -111,24 +111,52 @@
 
 ## 26/09/2026 — Sesión 2
 
-### Cambios
+### Logros
 - Conecté el catálogo a Google Sheets: ahora las joyas se leen desde una planilla publicada en CSV, no del código.
 - Mi mamá puede agregar o borrar joyas editando directamente la planilla, sin tocar código.
-- Agregué la columna `id` en la planilla, para identificar cada joya de forma única. Todavía no se usa en el código, pero va a hacer falta cuando haga el panel de administración.
-- Agregué un fondo con una imagen delicada: un velo claro semitransparente superpuesto a la imagen, hecho con `linear-gradient`.
+- Agregué la columna `id` en la planilla (pensada para el futuro panel de administración).
+- Agregué un fondo con una imagen delicada: un velo claro semitransparente superpuesto a la imagen, hecho con `linear-gradient`. Saqué `background-attachment: fixed` porque en iPhone no se veía (Safari no lo respeta bien).
+- Validación de datos: una joya solo aparece en el catálogo si tiene `nombre` **y** `imagen` (usando `&&`). Las filas incompletas del CSV se ignoran en vez de mostrar una tarjeta rota.
 
 ### Conceptos que aprendí
-- **`fetch` y promesas (`.then`):** cómo pedirle datos a otro servidor que tardan en llegar, y encadenar "cuando lleguen, hacé esto" sin bloquear el resto de la página mientras se espera.
-- **Convertir CSV en objetos:** cómo tomar texto plano separado por comas y transformarlo en el mismo tipo de array de objetos que usaba el código antes.
-- **CORS:** por qué el catálogo no cargaba los datos al abrir `index.html` directo desde el disco (`file://`), pero sí funciona cuando se sirve por `https` (como en GitHub Pages). El navegador bloquea pedidos entre orígenes distintos salvo que el servidor lo permita explícitamente, y `file://` no cuenta como un origen válido para eso.
+- **`fetch` y promesas (`.then`):** cómo pedirle datos a otro servidor que tardan en llegar, sin bloquear el resto de la página mientras se espera.
+- **CORS:** por qué el catálogo no cargaba los datos al abrir `index.html` directo desde el disco (`file://`), pero sí funciona servido por `https` (como en GitHub Pages). El navegador bloquea pedidos entre orígenes distintos salvo que el servidor lo permita explícitamente, y `file://` no cuenta como un origen válido para eso.
 - **IDs únicos:** un id tiene que ser permanente (no cambiar nunca para la misma joya), puede tener huecos en la numeración (si se borra una joya, ese número no se reutiliza), y nunca se reasigna a otra fila. Es la misma lógica que usan las bases de datos para identificar filas.
-- **Fondos en capas con CSS:** se pueden superponer varios fondos separados por coma (por ejemplo un `linear-gradient` semitransparente encima de una imagen) para lograr un velo sutil sin tener que editar la imagen original.
-- **Cómo funciona una VM (máquina virtual):** la configuración vive en el programa anfitrión (host), y el disco de la máquina virtual es un archivo `.vdi` aparte.
+- **Validación de entrada:** nunca hay que confiar en que los datos externos (como una planilla editada a mano) vienen completos. Siempre conviene chequear antes de usarlos.
+- **Truthy/falsy y operadores `&&` (Y) / `||` (O):** en JavaScript un string vacío `""` se evalúa como falso y uno con contenido como verdadero. `&&` exige que ambos lados sean verdaderos para que la condición completa lo sea; `||` alcanza con que uno solo lo sea.
+- **Ocultar no es proteger:** los datos de un CSV publicado son públicos y cualquiera con el link los puede ver, aunque no se muestren en la interfaz. Por eso lo seguro es borrar la joya de la planilla, no solo "esconderla" con un filtro.
 
 ### Próximos pasos pendientes
-- **Lo más importante:** subir fotos reales de las joyas y reemplazar los links de picsum.photos por las URLs reales.
-- Más adelante: un panel administrable con login y base de datos (esto es el "Camino 2", un proyecto grande a futuro).
+- **Fotos reales (lo más importante):** mi mamá las saca con el celular, así que hay que resolver cómo darles una URL (subirlas a algún hosting) y ajustar el código para que `joya.imagen` se use como link directo en vez de picsum.photos.
+- Compartir la planilla con mi mamá con permiso de Editor.
+- Cargar las joyas reales en la planilla.
+- Opcional a futuro: botón de WhatsApp en las tarjetas, panel administrable con login y base de datos (Camino 2).
 
 ---
 
-**Dónde quedamos:** catálogo funcional y online, conectado a Google Sheets. El próximo paso natural es cargar las fotos reales de las joyas.
+**Dónde quedamos:** catálogo online, funcional y robusto ante datos incompletos. Próximo paso: resolver el tema de las fotos del celular (hosting + URLs).
+
+## 26/09/2026 — Rediseño estilo "cálido boutique"
+
+### Cambios de hoy
+- Rediseño visual completo (solo CSS, ninguna función se tocó): paleta cálida con variables de color (`:root`) en tonos crema, terracota y dorado apagado, en vez de colores sueltos repetidos por todo el archivo.
+- Tarjetas con más aire (más `gap`, más `padding`), esquinas más redondeadas, sombra con tinte marrón cálido en vez de negro puro, y zoom suave de la imagen al pasar el mouse.
+- Botones de categoría con degradé terracota→dorado cuando están activos, en vez de un marrón plano.
+- Etiquetas de estado (disponible/vendida/reservada) con colores más suaves, manteniendo el mismo significado.
+- Modal con una pequeña animación de aparición (escala + fade) usando `transition` en CSS, sin tocar el JavaScript que lo abre/cierra.
+- Título con una línea decorativa fina debajo (hecha con `::after`, sin imágenes) para dar sensación de marca.
+
+### Conceptos que aprendí
+- **Variables CSS (`:root` y `var()`):** definir los colores una sola vez con un nombre (ej. `--terracota`) y reutilizarlos en todo el archivo. Si mañana quiero cambiar el tono principal, edito un solo lugar en vez de buscar el color por todo el CSS.
+- **Separar estética de funcionalidad:** todo el rediseño fue solo en la etiqueta `<style>`; el `<script>` con la lógica (fetch, filtros, modal) no se tocó, porque el diseño y el comportamiento son cosas independientes.
+- **Pseudo-elementos (`::after`):** se puede agregar un elemento visual (como la línea decorativa bajo el título) sin agregar una etiqueta HTML nueva, solo con CSS.
+- **Transiciones en estados (`.activo`):** la animación del modal no es JavaScript animando nada; es CSS diciendo "cuando tengas la clase `.activo`, cambiá de escala 0.94 a 1 con una transición de 0.25s", y el JavaScript solo pone/saca esa clase.
+
+### Próximos pasos pendientes
+- Fotos reales de las joyas (hosting + URLs).
+- Botón de WhatsApp en cada tarjeta.
+- Llevar el catálogo a producción con GitHub Pages.
+
+---
+
+**Dónde quedamos:** catálogo con diseño boutique (cálido, elegante, con más aire y detalles cuidados), funcionalidad intacta. Próximo paso: resolver el tema de las fotos del celular.
