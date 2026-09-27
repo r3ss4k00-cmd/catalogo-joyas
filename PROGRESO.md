@@ -160,3 +160,30 @@
 ---
 
 **Dónde quedamos:** catálogo con diseño boutique (cálido, elegante, con más aire y detalles cuidados), funcionalidad intacta. Próximo paso: resolver el tema de las fotos del celular.
+
+## 26/09/2026 — Botón de WhatsApp en el modal
+
+### Cambios de hoy
+- Agregué un botón "Consultar por WhatsApp" **solo dentro del modal** (las tarjetas del catálogo siguen sin botón, como se pidió).
+- Al tocarlo, abre WhatsApp en una pestaña nueva hacia un número fijo, con un mensaje ya escrito que incluye el nombre de la joya que está abierta.
+- Estilo del botón coherente con la paleta boutique (terracota oscuro, no el verde típico de WhatsApp) para que no desentone.
+
+### Cómo el botón sabe qué joya está abierta
+- El link (`<a id="enlaceWhatsapp">`) arranca en el HTML con un `href="#"` que no sirve para nada todavía — es solo un lugar en la página.
+- Cada vez que se abre una joya, se ejecuta `abrirModal(joya)`, que ya recibía los datos de esa joya (así es como siempre completó la imagen y el nombre del modal).
+- Adentro de esa misma función, ahora armo el mensaje con un template literal: `` `¡Hola! Me interesa esta joya: ${joya.nombre}, ¿me pasás más info?` `` — igual que ya se hacía para meter `joya.imagen` en la URL de la foto.
+- Ese mensaje se mete en la URL de WhatsApp (`https://wa.me/NUMERO?text=...`) pasado por `encodeURIComponent()`. Esta función es necesaria porque una URL no puede tener espacios, acentos ni signos como `¿`/`¡` sueltos — los convierte en código seguro para URL (por ejemplo el espacio pasa a `%20`).
+- Por último, actualizo el `href` real del link: `enlaceWhatsapp.href = ...`. Como esto pasa *cada vez* que se abre una joya distinta, el botón siempre apunta a la joya que está viendo la clienta en ese momento — no hace falta un botón por joya, alcanza con uno solo que se actualiza dinámicamente.
+
+### Conceptos que aprendí
+- **Actualizar un atributo desde JavaScript:** un link no tiene que tener su destino fijo en el HTML; se puede cambiar en cualquier momento con `elemento.href = "..."`, igual que ya hacía con `.src` para la imagen del modal.
+- **`encodeURIComponent`:** sirve para meter texto "libre" (con espacios, tildes, signos) dentro de una URL sin romperla.
+- **Reutilizar un patrón que ya conocía:** el truco de guardar la joya actual y usar sus datos dentro de `abrirModal` ya lo venía haciendo para la imagen y el nombre; el botón de WhatsApp usa exactamente la misma idea.
+
+### Próximos pasos pendientes
+- Fotos reales de las joyas (hosting + URLs).
+- Llevar el catálogo a producción con GitHub Pages.
+
+---
+
+**Dónde quedamos:** catálogo con diseño boutique + botón de WhatsApp funcional en el modal. Próximo paso: resolver el tema de las fotos del celular.
