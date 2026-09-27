@@ -414,6 +414,29 @@
       dije: "Dijes"
     };
 
+    const IMAGEN_SIN_FOTO = "data:image/svg+xml;utf8," + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">' +
+      '<rect width="100%" height="100%" fill="#ecdfcc"/>' +
+      '<text x="50%" y="50%" font-family="Poppins, sans-serif" font-size="24" fill="#8a7362" text-anchor="middle" dominant-baseline="middle">Sin imagen</text>' +
+      '</svg>'
+    );
+
+    function normalizarUrlImagen(url) {
+      let limpia = url.trim();
+
+      if (limpia.startsWith("http://")) {
+        limpia = "https://" + limpia.slice("http://".length);
+      }
+
+      return limpia;
+    }
+
+    function manejarErrorImagen(img) {
+      if (img.src !== IMAGEN_SIN_FOTO) {
+        img.src = IMAGEN_SIN_FOTO;
+      }
+    }
+
     const contenedor = document.getElementById("catalogo");
     const checkbox = document.getElementById("filtroDisponibles");
 
@@ -431,8 +454,12 @@
     const enlaceWhatsapp = document.getElementById("enlaceWhatsapp");
     const NUMERO_WHATSAPP = "5490000000000";
 
+    modalImagen.onerror = function () {
+      manejarErrorImagen(modalImagen);
+    };
+
     function abrirModal(joya) {
-      modalImagen.src = `https://picsum.photos/500/500?random=${joya.imagen}`;
+      modalImagen.src = normalizarUrlImagen(joya.imagen);
       modalImagen.alt = joya.nombre;
       modalNombre.textContent = joya.nombre;
 
@@ -468,7 +495,7 @@
         tarjeta.className = "tarjeta";
 
         tarjeta.innerHTML = `
-          <img src="https://picsum.photos/300/300?random=${joya.imagen}" alt="${joya.nombre}">
+          <img src="${normalizarUrlImagen(joya.imagen)}" alt="${joya.nombre}" loading="lazy" onerror="manejarErrorImagen(this)">
           <div class="info">
             <p class="nombre">${joya.nombre}</p>
             <span class="estado ${joya.estado}">${etiquetas[joya.estado]}</span>

@@ -187,3 +187,42 @@
 ---
 
 **Dónde quedamos:** catálogo con diseño boutique + botón de WhatsApp funcional en el modal. Próximo paso: resolver el tema de las fotos del celular.
+
+## 26/09/2026 — Fotos reales (ImgBB) en vez de picsum
+
+### Cambios de hoy
+- Ahora la columna `imagen` de la planilla trae un link real (de ImgBB) en vez de un número, y el catálogo usa ese link directo (`joya.imagen`) como `src` de la foto, tanto en la tarjeta como en el modal. Se sacó `picsum.photos` de los dos lugares.
+- Antes de usar el link, se lo "limpia" con una función `normalizarUrlImagen`:
+  - Le saca espacios de más al principio/final con `.trim()` (por si al pegar el link en la planilla quedó un espacio colado).
+  - Si empieza con `http://` (sin la "s"), lo cambia a `https://`, para que el navegador no lo bloquee por contenido inseguro.
+- Las fotos en las tarjetas se ven todas parejas (mismo tamaño, encuadradas) gracias a `object-fit: cover`, que ya estaba puesto — no hizo falta CSS nuevo ahí; ahora simplemente funciona con fotos de tamaños reales en vez de las cuadradas de picsum.
+- Si un link de foto no carga (rota, borrada de ImgBB, etc.), en vez de mostrar el ícono de "imagen rota" del navegador, se reemplaza automáticamente por un cuadro con fondo beige y el texto "Sin imagen" — hecho con una imagen SVG generada en el momento, no con una foto externa.
+- Se agregó `loading="lazy"` a las fotos de las tarjetas: el navegador solo las descarga cuando están por entrar en pantalla, así el catálogo abre más rápido si hay muchas joyas.
+- La validación sigue igual: una joya solo se muestra si tiene `nombre` **y** `imagen`.
+
+### Conceptos que aprendí
+
+**Manejo de errores en imágenes (`onerror`)**
+- Un `<img>` tiene un evento `onerror` que se dispara si el link no carga (404, link roto, etc.). Ahí se puede reaccionar cambiando el `src` a otra imagen de emergencia, en vez de dejar que el navegador muestre el ícono roto.
+- Para el modal usé `modalImagen.onerror = function () {...}` una sola vez (fuera de `abrirModal`), porque el modal es un único elemento `<img>` que se reutiliza para todas las joyas — no hace falta reconectar el evento cada vez que se abre una joya distinta.
+- Para las tarjetas usé `onerror="manejarErrorImagen(this)"` directo en el HTML de cada `<img>`, porque cada tarjeta es un elemento nuevo que se crea de cero al recorrer la lista de joyas.
+
+**Placeholder con SVG en vez de una imagen externa**
+- En vez de guardar un archivo de imagen para el "Sin imagen", generé un SVG chiquito (un rectángulo con texto) directamente en JavaScript como texto, y lo convertí en una URL válida para `src` con el prefijo `data:image/svg+xml;utf8,` + `encodeURIComponent(...)`. Así no depende de internet ni de un archivo aparte — siempre está disponible.
+
+**Prevenir bucles infinitos**
+- Si el placeholder también fallara, `onerror` se volvería a disparar sin parar. Por eso `manejarErrorImagen` primero chequea `if (img.src !== IMAGEN_SIN_FOTO)` antes de cambiar el `src` — así, aunque se dispare el evento de nuevo, no hace nada si ya está mostrando el placeholder.
+
+**HTTP vs HTTPS**
+- Un sitio servido por `https` (como GitHub Pages) bloquea por seguridad las imágenes que vengan de un link `http` sin cifrar ("contenido mixto"). Por eso conviene forzar `https://` en los links antes de usarlos, en vez de confiar en cómo los pegó cada uno en la planilla.
+
+**`loading="lazy"`**
+- Es un atributo nativo del HTML (no hace falta JavaScript ni librerías): le dice al navegador "no descargues esta imagen todavía, esperá a que el usuario esté por verla". Con pocas joyas no se nota, pero si el catálogo crece a decenas de fotos, evita que la página tarde en cargar todo de una.
+
+### Próximos pasos pendientes
+- Compartir la planilla con la dueña con permiso de Editor (si no se hizo aún) y que cargue las fotos reales vía ImgBB.
+- Llevar el catálogo a producción con GitHub Pages.
+
+---
+
+**Dónde quedamos:** catálogo con fotos reales desde ImgBB (con limpieza de URL, HTTPS forzado, tamaño uniforme, fallback "Sin imagen" y lazy loading). Próximo paso: publicarlo en GitHub Pages.
