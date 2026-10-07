@@ -272,3 +272,31 @@
 ---
 
 **Dónde quedamos:** tanda 1 de la auditoría lista (título, Open Graph, constante de WhatsApp, tarjetas como botones seguras). Próximo: número real de WhatsApp y tanda 2 (contraste y foco visible).
+
+## 06/10/2026 — Nueva identidad visual de Joyería Kalo
+
+### Cambios de hoy
+- Rediseño inspirado (no copiado) en una referencia de joyería: banda oscura arriba + zona clara para las joyas + detalles dorados finos.
+- Paleta nueva: **ciruela** `#24131d`, **champagne** `#d8bf8a`, **lino** `#efe6da`, **papel** `#faf6f0`, **tinta** `#2b1d24`.
+- Tipografías nuevas: **Bodoni Moda** (títulos) y **Jost** (texto).
+- El `<header>` salió de `.contenido` a su propia banda (`.portada`) con `fondo.avif` oscurecido detrás.
+- Tarjetas con foto cuadrada, borde fino y estado con puntito de color (sin mayúsculas).
+- Grilla: 2 columnas en celular, 3 en tablet, 4 en compu.
+- No se tocó nada del JavaScript.
+
+### Conceptos que aprendí
+- **Contraste WCAG AA:** el texto tiene que tener al menos 4.5:1 de contraste con su fondo. Se calcula con una fórmula a partir de los colores; antes de elegir la paleta se verificó cada par (el peor quedó en 5.1:1).
+- **Mobile first:** el CSS base es para el celular, y con `@media (min-width: 640px)` / `(min-width: 960px)` se agregan cambios para pantallas más grandes. Al revés que antes.
+- **`:focus-visible`:** dibuja un contorno solo cuando se navega con teclado (no al tocar con el dedo o hacer clic). Así nadie se pierde en la página.
+- **`@media (hover: hover)`:** aplica el efecto hover solo en dispositivos con mouse; en el celular el hover quedaba "pegado" después de tocar.
+- **`@media (prefers-reduced-motion: reduce)`:** respeta a quien pidió en su celular/compu menos animaciones.
+- **`aspect-ratio: 1 / 1`:** hace que la foto sea cuadrada sin importar el ancho de la tarjeta (en vez de una altura fija en px).
+- **Variables CSS (`--ciruela`, `--serif`...):** cambiar un color en `:root` lo cambia en toda la página.
+
+### Pendiente
+- El "Sin imagen" (SVG en JavaScript) sigue con los colores viejos; se puede actualizar a la paleta nueva.
+- Interruptor "Solo disponibles" sin nombre accesible (punto #6 de la auditoría).
+
+---
+
+**Dónde quedamos:** catálogo con la nueva identidad visual (ciruela + champagne, Bodoni Moda + Jost), mobile first, contraste AA y foco visible. Próximo: número real de WhatsApp, colores del "Sin imagen" y seguir con la auditoría (modal accesible, estado vacío).

@@ -12,204 +12,54 @@
   <meta property="og:description" content="Catálogo de Joyería Kalo: anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas. Consultá por WhatsApp.">
   <meta property="og:image" content="https://i.ibb.co/xK0nmdNm/211f1113-66e7-4bf8-bd37-477c349102b4.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    /* Paleta de Joyería Kalo (todos los textos pasan WCAG AA, mínimo 5:1) */
     :root {
-      --crema: #fdf8f2;
-      --crema-suave: #fffbf6;
-      --beige: #ecdfcc;
-      --terracota: #c17a5f;
-      --terracota-oscuro: #a8593f;
-      --dorado: #b08d4f;
-      --dorado-suave: #d9c19a;
-      --marron-texto: #4a3728;
-      --marron-suave: #8a7362;
+      --ciruela: #24131d;
+      --ciruela-hover: #3a2230;
+      --champagne: #d8bf8a;
+      --champagne-suave: #bfa77a;
+      --marfil: #f3ead9;
+      --lino: #efe6da;
+      --papel: #faf6f0;
+      --tinta: #2b1d24;
+      --gris-ciruela: #6b5560;
+      --oro-texto: #7a5a1e;
+      --borde: #e0d3bf;
+
+      --serif: 'Bodoni Moda', Georgia, serif;
+      --sans: 'Jost', system-ui, sans-serif;
     }
 
+    /* ---------- Base (pensada primero para el celular) ---------- */
+
     body {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 300;
-      background-color: var(--crema);
-      background-image: linear-gradient(rgba(253, 248, 242, 0.7), rgba(250, 240, 224, 0.9)), url('fondo.avif');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      min-height: 100vh;
+      font-family: var(--sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      background-color: var(--lino);
+      color: var(--tinta);
       margin: 0;
-      padding: 0;
-      color: var(--marron-suave);
+      min-height: 100vh;
     }
+
+    /* Foco visible para quien navega con teclado */
+    :focus-visible {
+      outline: 2px solid var(--oro-texto);
+      outline-offset: 3px;
+    }
+
+    /* ---------- Barra superior (oscura) ---------- */
 
     .barra-superior {
       position: sticky;
       top: 0;
       z-index: 10;
-      background-color: rgba(255, 251, 246, 0.88);
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid var(--dorado-suave);
-      padding: 14px 24px;
-    }
-
-    .contenido {
-      padding: 56px 20px 70px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 56px;
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 600;
-      font-size: 2.6em;
-      letter-spacing: 0.5px;
-      color: var(--marron-texto);
-      margin: 0 0 10px 0;
-    }
-
-    .subtitulo {
-      font-size: 0.75em;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--dorado);
-      margin: 0 0 18px 0;
-    }
-
-    .subtitulo::after {
-      content: "";
-      display: block;
-      width: 46px;
-      height: 1px;
-      background-color: var(--dorado-suave);
-      margin: 16px auto 0 auto;
-    }
-
-    .catalogo {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 36px;
-      max-width: 1040px;
-      margin: 0 auto;
-    }
-
-    .tarjeta {
-      background-color: var(--crema-suave);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(122, 90, 60, 0.1);
-      text-align: center;
-      cursor: pointer;
-      border: none;
-      padding: 0;
-      width: 100%;
-      font: inherit;
-      color: inherit;
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-
-    .tarjeta:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 30px rgba(122, 90, 60, 0.18);
-    }
-
-    .tarjeta img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s ease;
-    }
-
-    .tarjeta:hover img {
-      transform: scale(1.06);
-    }
-
-    .info {
-      display: block;
-      padding: 18px 16px 20px;
-    }
-
-    .nombre {
-      display: block;
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1em;
-      font-weight: 600;
-      margin: 0 0 12px 0;
-      color: var(--marron-texto);
-    }
-
-    .estado {
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: 15px;
-      font-size: 0.68em;
-      font-weight: 500;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-    }
-
-    .disponible {
-      background-color: #e8efe1;
-      color: #55703f;
-    }
-
-    .vendida {
-      background-color: #f4e2df;
-      color: #9a4f42;
-    }
-
-    .reservada {
-      background-color: #f7ecd6;
-      color: #91711f;
-    }
-
-    .categorias {
-      max-width: 1040px;
-      margin: 0 auto 40px auto;
-      text-align: center;
-    }
-
-    .fila-categorias {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .boton-categoria {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.85em;
-      padding: 9px 20px;
-      border: 1px solid var(--dorado-suave);
-      border-radius: 20px;
-      background-color: var(--crema-suave);
-      color: var(--marron-texto);
-      cursor: pointer;
-      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
-    }
-
-    .boton-categoria:hover {
-      background-color: #f3e7d4;
-      border-color: var(--dorado);
-      transform: translateY(-1px);
-    }
-
-    .boton-categoria.activo {
-      background-image: linear-gradient(135deg, var(--terracota), var(--dorado));
-      border-color: transparent;
-      color: white;
-    }
-
-    .boton-volver {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.8em;
-      background: none;
-      border: none;
-      color: var(--dorado);
-      text-decoration: underline;
-      cursor: pointer;
+      background-color: var(--ciruela);
+      border-bottom: 1px solid rgba(216, 191, 138, 0.25);
+      padding: 10px 16px;
     }
 
     .filtro {
@@ -219,15 +69,15 @@
       gap: 12px;
       max-width: 1040px;
       margin: 0 auto;
-      font-size: 0.85em;
-      color: var(--marron-suave);
+      font-size: 0.9rem;
+      color: var(--champagne-suave);
     }
 
     .switch {
       position: relative;
       display: inline-block;
-      width: 40px;
-      height: 22px;
+      width: 44px;
+      height: 24px;
       flex-shrink: 0;
     }
 
@@ -240,47 +90,239 @@
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ddd;
-      border-radius: 22px;
+      inset: 0;
+      background-color: #8c7a82;
+      border-radius: 24px;
       transition: background-color 0.2s ease;
     }
 
     .slider::before {
       content: "";
       position: absolute;
-      height: 16px;
-      width: 16px;
+      height: 18px;
+      width: 18px;
       left: 3px;
       bottom: 3px;
-      background-color: white;
+      background-color: var(--marfil);
       border-radius: 50%;
       transition: transform 0.2s ease;
     }
 
     .switch input:checked + .slider {
-      background-color: var(--terracota);
+      background-color: var(--champagne);
     }
 
     .switch input:checked + .slider::before {
-      transform: translateX(18px);
+      transform: translateX(20px);
+      background-color: var(--ciruela);
     }
+
+    .switch input:focus-visible + .slider {
+      outline: 2px solid var(--champagne);
+      outline-offset: 3px;
+    }
+
+    /* ---------- Portada (la banda oscura con el nombre) ---------- */
+
+    .portada {
+      background-color: var(--ciruela);
+      background-image: linear-gradient(rgba(36, 19, 29, 0.84), rgba(36, 19, 29, 0.95)), url('fondo.avif');
+      background-size: cover;
+      background-position: center;
+      padding: 56px 16px 60px;
+    }
+
+    .portada-interior {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2.8rem, 12vw, 5.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      color: var(--marfil);
+      margin: 0;
+      text-wrap: balance;
+    }
+
+    .subtitulo {
+      font-size: 1.05rem;
+      color: var(--champagne);
+      margin: 20px 0 0 0;
+    }
+
+    .subtitulo::before {
+      content: "";
+      display: block;
+      width: 48px;
+      height: 1px;
+      background-color: var(--champagne);
+      margin-bottom: 16px;
+    }
+
+    /* ---------- Zona clara: categorías y catálogo ---------- */
+
+    .contenido {
+      padding: 32px 16px 64px;
+    }
+
+    .categorias {
+      max-width: 1040px;
+      margin: 0 auto 32px auto;
+    }
+
+    .fila-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .boton-categoria {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      min-height: 44px;
+      padding: 8px 18px;
+      border: 1px solid var(--oro-texto);
+      border-radius: 4px;
+      background-color: transparent;
+      color: var(--tinta);
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .boton-categoria:hover {
+      background-color: var(--papel);
+    }
+
+    .boton-categoria.activo {
+      background-color: var(--ciruela);
+      border-color: var(--ciruela);
+      color: var(--champagne);
+    }
+
+    .boton-volver {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      min-height: 44px;
+      padding: 0;
+      background: none;
+      border: none;
+      color: var(--oro-texto);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    /* Mensajes de "Cargando…" o de error ocupan todo el ancho */
+    .catalogo > p {
+      grid-column: 1 / -1;
+      color: var(--gris-ciruela);
+    }
+
+    /* ---------- Tarjeta (es un <button>) ---------- */
+
+    .tarjeta {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      background-color: var(--papel);
+      border: 1px solid var(--borde);
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.25s ease;
+    }
+
+    .tarjeta img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .info {
+      display: block;
+      padding: 12px 12px 14px;
+    }
+
+    .nombre {
+      display: block;
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--tinta);
+      margin: 0 0 6px 0;
+    }
+
+    /* Estado: un puntito de color + texto */
+    .estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .estado::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    .disponible {
+      color: #3f5a2c;
+    }
+
+    .vendida {
+      color: #8a3b2e;
+    }
+
+    .reservada {
+      color: #6e5310;
+    }
+
+    /* Efecto hover solo en dispositivos con mouse (en el celular queda "pegado") */
+    @media (hover: hover) {
+      .tarjeta:hover {
+        border-color: var(--oro-texto);
+      }
+
+      .tarjeta:hover img {
+        transform: scale(1.03);
+      }
+    }
+
+    /* ---------- Modal ---------- */
 
     .modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(35, 26, 18, 0.72);
+      inset: 0;
+      background-color: rgba(36, 19, 29, 0.82);
       align-items: center;
       justify-content: center;
       z-index: 100;
-      padding: 20px;
+      padding: 16px;
       overflow-y: auto;
     }
 
@@ -290,16 +332,15 @@
 
     .modal-contenido {
       position: relative;
-      background-color: var(--crema-suave);
-      border-radius: 18px;
-      padding: 26px;
-      width: 380px;
+      background-color: var(--papel);
+      border-radius: 8px;
+      padding: 52px 20px 24px;
+      width: 420px;
       max-width: 100%;
       max-height: 90vh;
       overflow-y: auto;
       text-align: center;
-      box-shadow: 0 20px 45px rgba(35, 26, 18, 0.3);
-      transform: scale(0.94);
+      transform: scale(0.96);
       opacity: 0;
       transition: transform 0.25s ease, opacity 0.25s ease;
     }
@@ -313,57 +354,104 @@
       max-width: 100%;
       max-height: 60vh;
       object-fit: contain;
-      border-radius: 10px;
-      margin: 0 auto 18px auto;
+      border-radius: 4px;
+      margin: 0 auto 20px auto;
       display: block;
     }
 
     .modal-nombre {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3em;
-      font-weight: 600;
-      color: var(--marron-texto);
-      margin: 0 0 6px 0;
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--tinta);
+      margin: 0 0 20px 0;
     }
 
     .cerrar {
       position: absolute;
-      top: 8px;
-      right: 12px;
+      top: 4px;
+      right: 4px;
+      width: 44px;
+      height: 44px;
       background: none;
       border: none;
-      font-size: 1.8em;
+      font-size: 1.8rem;
       line-height: 1;
-      color: var(--marron-suave);
+      color: var(--gris-ciruela);
       cursor: pointer;
     }
 
     .cerrar:hover {
-      color: var(--terracota-oscuro);
+      color: var(--tinta);
     }
 
     .boton-whatsapp {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin: 4px auto 0 auto;
-      padding: 10px 22px;
-      background-color: var(--terracota-oscuro);
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.85em;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 24px;
+      background-color: var(--ciruela);
+      color: var(--papel);
+      font-family: var(--sans);
+      font-size: 1rem;
       font-weight: 500;
-      border-radius: 24px;
+      border-radius: 4px;
       text-decoration: none;
-      box-shadow: 0 4px 12px rgba(168, 89, 63, 0.3);
-      transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+      transition: background-color 0.2s ease;
     }
 
     .boton-whatsapp:hover {
-      background-color: #8f4a34;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(168, 89, 63, 0.35);
+      background-color: var(--ciruela-hover);
+    }
+
+    /* ---------- Pantallas más grandes ---------- */
+
+    @media (min-width: 640px) {
+      .portada {
+        padding: 88px 24px 96px;
+      }
+
+      .contenido {
+        padding: 48px 24px 80px;
+      }
+
+      .catalogo {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .info {
+        padding: 16px 16px 18px;
+      }
+
+      .nombre {
+        font-size: 1.15rem;
+      }
+
+      .modal-contenido {
+        padding: 52px 28px 28px;
+      }
+    }
+
+    @media (min-width: 960px) {
+      .catalogo {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+    }
+
+    /* Si la persona pidió menos movimiento, se apagan las animaciones */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+      }
+
+      .tarjeta:hover img {
+        transform: none;
+      }
     }
   </style>
 </head>
@@ -379,12 +467,14 @@
     </div>
   </div>
 
-  <div class="contenido">
-    <header>
+  <header class="portada">
+    <div class="portada-interior">
       <h1>Joyería Kalo</h1>
       <p class="subtitulo">Catálogo</p>
-    </header>
+    </div>
+  </header>
 
+  <div class="contenido">
     <div class="categorias">
       <div class="fila-categorias" id="botonesTipo"></div>
       <div class="fila-categorias" id="botonesMaterial" style="display: none;"></div>
