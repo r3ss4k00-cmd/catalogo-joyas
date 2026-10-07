@@ -225,4 +225,24 @@
 
 ---
 
-**Dónde quedamos:** catálogo con fotos reales desde ImgBB (con limpieza de URL, HTTPS forzado, tamaño uniforme, fallback "Sin imagen" y lazy loading). Próximo paso: publicarlo en GitHub Pages.
+**Dónde quedamos:** catálogo con el sistema de fotos reales ya programado (limpieza de URL, HTTPS forzado, tamaño uniforme, fallback "Sin imagen" y lazy loading), pero sin verificar todavía con una foto real (la de prueba de ImgBB se perdió). Próximo paso: conseguir un link de foto real y confirmar que carga bien.
+
+## 26/09/2026 — Cierre de sesión: repaso general
+
+### Resumen de lo hecho hoy
+- **Fotos:** el código ya usa URLs reales de ImgBB en vez de picsum, con manejo de imagen rota (placeholder "Sin imagen"), lazy loading y forzado de `https`. El sistema **funciona** — se probó y el placeholder aparece correctamente cuando no hay una foto válida.
+- **WhatsApp:** se agregó el botón "Consultar por WhatsApp" dentro del modal, con el mensaje armado dinámicamente según la joya abierta.
+- **Google Sheets:** se mejoró la planilla por fuera del código — listas desplegables para `material`, `tipo` y `estado` (para que la dueña no escriba mal esos valores), formato prolijo en los títulos de columna, fila de encabezado congelada, y una pestaña nueva de "Instrucciones" para que ella sepa cómo cargar joyas sola.
+
+### Pendiente para la próxima
+- **Verificar el sistema de fotos con una foto real que cargue** (la de prueba de ImgBB se perdió). Pasos:
+  1. Crear una cuenta en ImgBB (para que las fotos no se borren solas).
+  2. Subir una foto de prueba.
+  3. Copiar el link **directo** a la imagen — el que sale en la opción "HTML completo enlazado" de ImgBB, con formato `i.ibb.co/.../nombre.jpg` (no el link de la página de ImgBB, sino el de la imagen en sí).
+  4. Pegar ese link directo en la columna `imagen` de la planilla y confirmar que la foto aparece en el catálogo.
+- Resolver cómo copiar/pegar links entre Windows y Kali (o, alternativa, editar la planilla directamente desde el celular).
+- Completar la pestaña de "Instrucciones" con el flujo completo de fotos para la dueña — es el paso más confuso de todo el proceso, así que conviene explicarlo bien con capturas o pasos bien concretos.
+
+---
+
+**Dónde quedamos:** catálogo completo y funcional (diseño boutique, Sheets, filtros, categorías, modal, botón de WhatsApp, sistema de fotos programado y andando). Solo falta verificar el sistema de fotos con un link real de ImgBB, y terminar de dejarle todo fácil a la dueña (instrucciones de fotos + cómo cargar la planilla desde su celular o PC).
