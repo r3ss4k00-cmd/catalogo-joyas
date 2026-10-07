@@ -4,13 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Joyería Kalo · Catálogo</title>
-  <meta name="description" content="Catálogo de Joyería Kalo: anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas. Consultá por WhatsApp.">
+  <title>Joyería Kalo · Piezas elegidas una por una</title>
+  <meta name="description" content="Anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas, elegidos uno por uno. Consultá por WhatsApp.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Joyería Kalo">
-  <meta property="og:title" content="Joyería Kalo · Catálogo">
-  <meta property="og:description" content="Catálogo de Joyería Kalo: anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas. Consultá por WhatsApp.">
+  <meta property="og:url" content="https://r3ss4k00-cmd.github.io/catalogo-joyas/">
+  <meta property="og:title" content="Joyería Kalo · Piezas elegidas una por una">
+  <meta property="og:description" content="Anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas, elegidos uno por uno. Consultá por WhatsApp.">
   <meta property="og:image" content="https://i.ibb.co/xK0nmdNm/211f1113-66e7-4bf8-bd37-477c349102b4.jpg">
+  <!-- Favicon: una "K" champagne sobre ciruela, dibujada con trazos (así se ve igual en todos los equipos).
+       Va dentro del HTML como "data URI": no hace falta un archivo aparte. Los # se escriben %23. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2324131d'/%3E%3Cpath d='M11 7v18M21.5 7 11.5 17.5M14.5 14.5 22 25' fill='none' stroke='%23d8bf8a' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
@@ -51,6 +55,9 @@
       color: var(--tinta);
       margin: 0;
       min-height: 100vh;
+      /* Columna: la zona de joyas estira lo que falte, así el pie queda siempre abajo */
+      display: flex;
+      flex-direction: column;
     }
 
     /* Foco visible para quien navega con teclado */
@@ -64,6 +71,26 @@
       display: none !important;
     }
 
+    /* Texto que no se ve pero que sí leen los lectores de pantalla
+       (por ejemplo, "por WhatsApp" en el botón del modal) */
+    .solo-lectores {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Al seleccionar texto se usan los colores de la marca, no el azul del navegador */
+    ::selection {
+      background-color: var(--champagne);
+      color: var(--ciruela);
+    }
+
     /* ---------- Barra superior (oscura) ---------- */
 
     .barra-superior {
@@ -75,11 +102,29 @@
       padding: 0 16px;
     }
 
-    .filtro {
+    .barra-interior {
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
       max-width: 1040px;
       margin: 0 auto;
+    }
+
+    /* Nombre de la marca en la barra: al tocarlo vuelve arriba */
+    .marca {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+      color: var(--champagne);
+      text-decoration: none;
+    }
+
+    /* En las zonas oscuras el foco dorado oscuro no se ve (2.8:1): se usa champagne (9.9:1) */
+    .barra-superior :focus-visible,
+    .pie :focus-visible {
+      outline-color: var(--champagne);
     }
 
     /* Todo el label (texto + interruptor) se puede tocar */
@@ -88,8 +133,8 @@
       align-items: center;
       gap: 12px;
       min-height: 44px;
-      font-size: 0.9rem;
-      color: var(--champagne-suave);
+      font-size: 0.95rem;
+      color: var(--tinta);
       cursor: pointer;
     }
 
@@ -129,17 +174,19 @@
       transition: transform 200ms var(--ease-out), background-color 200ms ease;
     }
 
+    /* Encendido: ciruela con bolita champagne, igual que un filtro activo.
+       (El champagne solo sobre el fondo claro casi no se ve: 1.45:1) */
     .switch input:checked + .slider {
-      background-color: var(--champagne);
+      background-color: var(--ciruela);
     }
 
     .switch input:checked + .slider::before {
       transform: translateX(20px);
-      background-color: var(--ciruela);
+      background-color: var(--champagne);
     }
 
     .switch input:focus-visible + .slider {
-      outline: 2px solid var(--champagne);
+      outline: 2px solid var(--oro-texto);
       outline-offset: 3px;
     }
 
@@ -187,6 +234,7 @@
     /* ---------- Zona clara: categorías y catálogo ---------- */
 
     .contenido {
+      flex: 1;
       padding: 32px 16px 64px;
     }
 
@@ -556,6 +604,69 @@
       background-color: var(--ciruela-hover);
     }
 
+    /* Variante para fondo oscuro (el pie): champagne con texto ciruela (9.9:1) */
+    .boton-whatsapp.claro {
+      background-color: var(--champagne);
+      color: var(--ciruela);
+    }
+
+    .boton-whatsapp.claro:hover {
+      background-color: var(--marfil);
+    }
+
+    /* ---------- Pie de página (oscuro, como la portada) ---------- */
+
+    .pie {
+      background-color: var(--ciruela);
+      color: var(--marfil);
+      padding: 56px 16px 32px;
+    }
+
+    .pie-interior {
+      display: grid;
+      gap: 40px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .pie h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 1.4rem;
+      line-height: 1.25;
+      color: var(--champagne);
+      margin: 0 0 12px 0;
+      text-wrap: balance;
+    }
+
+    .pie p {
+      margin: 0 0 8px 0;
+      max-width: 42ch;
+    }
+
+    .pie .boton-whatsapp {
+      margin-top: 16px;
+    }
+
+    .enlace-instagram {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      margin-left: 20px;
+      color: var(--champagne);
+      text-underline-offset: 4px;
+    }
+
+    /* ".pie .pie-final" y no solo ".pie-final": así le gana a la regla ".pie p" de arriba */
+    .pie .pie-final {
+      max-width: 1040px;
+      margin: 48px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid rgba(216, 191, 138, 0.25);
+      font-size: 0.85rem;
+      color: var(--champagne-suave);
+    }
+
     /* ---------- Pantallas más grandes ---------- */
 
     @media (min-width: 640px) {
@@ -582,6 +693,16 @@
 
       .modal-contenido {
         padding: 52px 28px 28px;
+      }
+
+      /* Pie en dos columnas: cuidado | contacto */
+      .pie {
+        padding: 72px 24px 32px;
+      }
+
+      .pie-interior {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
       }
     }
 
@@ -615,26 +736,30 @@
 <body>
 
   <div class="barra-superior">
-    <div class="filtro">
-      <label class="opcion-filtro">
-        <span>Solo disponibles</span>
-        <span class="switch">
-          <input type="checkbox" id="filtroDisponibles">
-          <span class="slider"></span>
-        </span>
-      </label>
+    <div class="barra-interior">
+      <a class="marca" href="#">Kalo</a>
     </div>
   </div>
 
   <header class="portada">
     <div class="portada-interior">
       <h1>Joyería Kalo</h1>
-      <p class="subtitulo">Catálogo</p>
+      <p class="subtitulo">Piezas elegidas una por una</p>
     </div>
   </header>
 
   <div class="contenido">
     <div class="categorias">
+      <!-- Va primero: así no se mueve cuando aparece o desaparece la fila de Material -->
+      <div class="grupo-filtro">
+        <label class="opcion-filtro">
+          <span>Solo disponibles</span>
+          <span class="switch">
+            <input type="checkbox" id="filtroDisponibles">
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
       <div class="grupo-filtro">
         <p class="rotulo-filtro" id="rotuloTipo">Tipo</p>
         <div class="fila-categorias" id="botonesTipo" role="group" aria-labelledby="rotuloTipo"></div>
@@ -648,6 +773,32 @@
 
     <div class="catalogo" id="catalogo"></div>
   </div>
+
+  <footer class="pie">
+    <div class="pie-interior">
+      <section>
+        <h2>Cuidá tus joyas</h2>
+        <p>Guardá cada pieza por separado y sacátela antes de bañarte, ir a la pileta o ponerte perfume. Así conserva el brillo.</p>
+      </section>
+
+      <section>
+        <h2>¿Dudás con un talle o con un regalo?</h2>
+        <p>Escribime y te ayudo a elegir.</p>
+        <p>Coordino la entrega en mano por WhatsApp.</p>
+        <!-- TODO: medios de pago (efectivo, transferencia...) cuando estén confirmados -->
+        <a href="#" target="_blank" rel="noopener" class="boton-whatsapp claro" id="enlaceWhatsappPie">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+          </svg>
+          <span>Escribime por WhatsApp</span>
+        </a>
+        <!-- Se muestra solo cuando INSTAGRAM_USUARIO tiene un valor (ver el script) -->
+        <a href="#" target="_blank" rel="noopener" class="enlace-instagram" id="enlaceInstagram" hidden>Instagram</a>
+      </section>
+    </div>
+
+    <p class="pie-final">© 2026 Joyería Kalo</p>
+  </footer>
 
   <div class="modal" id="modal">
     <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="modalNombre">
@@ -667,7 +818,7 @@
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
           <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
         </svg>
-        <span id="textoWhatsapp">Consultar por WhatsApp</span>
+        <span id="textoWhatsapp">Consultar esta pieza</span><span class="solo-lectores"> por WhatsApp</span>
       </a>
     </div>
   </div>
@@ -677,6 +828,20 @@
 
     // TODO: reemplazar por el número real de WhatsApp (formato 549 + característica + número, sin + ni espacios)
     const WHATSAPP_NUMERO = "5490000000000";
+
+    // TODO: poner el usuario de Instagram sin @ (mientras esté vacío, el link no se muestra)
+    const INSTAGRAM_USUARIO = "";
+
+    // Pie de página: botón de WhatsApp general (no habla de una joya en particular)
+    const enlaceWhatsappPie = document.getElementById("enlaceWhatsappPie");
+    const mensajePie = "¡Hola! Vi el catálogo de Joyería Kalo y quería hacerte una consulta.";
+    enlaceWhatsappPie.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensajePie)}`;
+
+    if (INSTAGRAM_USUARIO) {
+      const enlaceInstagram = document.getElementById("enlaceInstagram");
+      enlaceInstagram.href = `https://www.instagram.com/${INSTAGRAM_USUARIO}/`;
+      enlaceInstagram.hidden = false;
+    }
 
     let joyas = [];
 
@@ -761,10 +926,10 @@
       let mensaje;
       if (joya.estado === "disponible") {
         mensaje = `¡Hola! Me interesa esta joya: ${joya.nombre}, ¿me pasás el precio y más info?`;
-        textoWhatsapp.textContent = "Consultar por WhatsApp";
+        textoWhatsapp.textContent = "Consultar esta pieza";
       } else {
         mensaje = `¡Hola! Vi esta joya en el catálogo: ${joya.nombre}. ¿Tenés alguna similar?`;
-        textoWhatsapp.textContent = "Consultar por una similar";
+        textoWhatsapp.textContent = "Buscar una parecida";
       }
       enlaceWhatsapp.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`;
 

@@ -369,3 +369,33 @@ Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
 ---
 
 **Dónde quedamos:** filtros, modal y animaciones listos (sin commit todavía). Próximo: **contenido** (fotos reales + número de WhatsApp) y después marca y confianza (logo, frase, pie de página).
+
+## 06/10/2026 — Capa de marca: textos, barra, pie y favicon
+
+### Cambios de hoy
+- **Frase nueva** en la portada: "Piezas elegidas una por una" (antes decía "Catálogo").
+- **Barra superior:** ahora muestra "Kalo" a la izquierda (al tocarlo vuelve arriba). El interruptor "Solo disponibles" se mudó a la zona de filtros, arriba de "Tipo".
+- **Botones del modal:** "Consultar esta pieza" y "Buscar una parecida". Los lectores de pantalla además escuchan "por WhatsApp".
+- **Pie de página nuevo:** cuidado de las joyas, atención personal en primera persona ("Escribime y te ayudo a elegir"), entrega en mano y un botón de WhatsApp que usa `WHATSAPP_NUMERO`.
+- **Título y vista previa** (lo que se ve al compartir el link por WhatsApp) con la frase nueva, más `og:url` con la dirección de GitHub Pages.
+- **Favicon:** una "K" champagne sobre ciruela.
+- Se probó con Chromium: recorrido con Tab, color del foco, textos del modal, link del pie e interruptor.
+
+### Conceptos que aprendí
+- **Copywriting:** un texto específico ("Piezas elegidas una por una") vende más que uno genérico ("Catálogo"), porque dice algo que solo es verdad de Kalo. Y no se promete nada que no exista (por eso no hay "garantía").
+- **Texto solo para lectores de pantalla (`.solo-lectores`):** se ve "Consultar esta pieza", pero una persona ciega escucha "Consultar esta pieza por WhatsApp". El texto existe, pero mide 1px y queda recortado.
+- **El contraste del foco depende del fondo:** el dorado oscuro se ve bien sobre lo claro (5.1:1), pero sobre el ciruela da 2.8:1 y casi desaparece. Por eso en la barra y en el pie el contorno es champagne.
+- **Especificidad en CSS:** `.pie p` le gana a `.pie-final` porque tiene más "puntaje" (clase + etiqueta contra una sola clase). Para ganarle se usa `.pie .pie-final`.
+- **Pie siempre abajo:** con `body` en columna (`display: flex; flex-direction: column`) y `flex: 1` en la zona de joyas, esa zona estira lo que falte y el pie no queda flotando a mitad de pantalla.
+- **Favicon en un data URI:** el dibujo SVG va escrito dentro del HTML y no hace falta un archivo aparte. La K está hecha con líneas (no con una letra) para que se vea igual en todos los equipos.
+
+### Pendiente
+- Poner el usuario de Instagram en `INSTAGRAM_USUARIO` (con eso el link aparece solo).
+- Confirmar si vende oro. Si no, sacar "oro, " de las dos descripciones del `<head>`.
+- Medios de pago (hay un TODO en el pie) y la política de cambios.
+- Ícono para la pantalla de inicio del iPhone (`apple-touch-icon`, necesita un PNG).
+- Sigue pendiente lo de antes: fotos reales y el número real de WhatsApp.
+
+---
+
+**Dónde quedamos:** capa de marca lista (sin commit todavía). Próximo: **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
