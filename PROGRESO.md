@@ -225,4 +225,177 @@
 
 ---
 
-**Dónde quedamos:** catálogo con fotos reales desde ImgBB (con limpieza de URL, HTTPS forzado, tamaño uniforme, fallback "Sin imagen" y lazy loading). Próximo paso: publicarlo en GitHub Pages.
+**Dónde quedamos:** catálogo con el sistema de fotos reales ya programado (limpieza de URL, HTTPS forzado, tamaño uniforme, fallback "Sin imagen" y lazy loading), pero sin verificar todavía con una foto real (la de prueba de ImgBB se perdió). Próximo paso: conseguir un link de foto real y confirmar que carga bien.
+
+## 26/09/2026 — Cierre de sesión: repaso general
+
+### Resumen de lo hecho hoy
+- **Fotos:** el código ya usa URLs reales de ImgBB en vez de picsum, con manejo de imagen rota (placeholder "Sin imagen"), lazy loading y forzado de `https`. El sistema **funciona** — se probó y el placeholder aparece correctamente cuando no hay una foto válida.
+- **WhatsApp:** se agregó el botón "Consultar por WhatsApp" dentro del modal, con el mensaje armado dinámicamente según la joya abierta.
+- **Google Sheets:** se mejoró la planilla por fuera del código — listas desplegables para `material`, `tipo` y `estado` (para que la dueña no escriba mal esos valores), formato prolijo en los títulos de columna, fila de encabezado congelada, y una pestaña nueva de "Instrucciones" para que ella sepa cómo cargar joyas sola.
+
+### Pendiente para la próxima
+- **Verificar el sistema de fotos con una foto real que cargue** (la de prueba de ImgBB se perdió). Pasos:
+  1. Crear una cuenta en ImgBB (para que las fotos no se borren solas).
+  2. Subir una foto de prueba.
+  3. Copiar el link **directo** a la imagen — el que sale en la opción "HTML completo enlazado" de ImgBB, con formato `i.ibb.co/.../nombre.jpg` (no el link de la página de ImgBB, sino el de la imagen en sí).
+  4. Pegar ese link directo en la columna `imagen` de la planilla y confirmar que la foto aparece en el catálogo.
+- Resolver cómo copiar/pegar links entre Windows y Kali (o, alternativa, editar la planilla directamente desde el celular).
+- Completar la pestaña de "Instrucciones" con el flujo completo de fotos para la dueña — es el paso más confuso de todo el proceso, así que conviene explicarlo bien con capturas o pasos bien concretos.
+
+---
+
+**Dónde quedamos:** catálogo completo y funcional (diseño boutique, Sheets, filtros, categorías, modal, botón de WhatsApp, sistema de fotos programado y andando). Solo falta verificar el sistema de fotos con un link real de ImgBB, y terminar de dejarle todo fácil a la dueña (instrucciones de fotos + cómo cargar la planilla desde su celular o PC).
+
+## 06/10/2026 — Auditoría de calidad y tanda 1 de arreglos
+
+### Cambios de hoy
+- Se hizo una auditoría (accesibilidad, rendimiento, SEO, buenas prácticas) con 29 puntos priorizados. Esta tanda arregla los más importantes.
+- El negocio ahora se llama **Joyería Kalo**: cambiaron el `<title>` ("Joyería Kalo · Catálogo") y el `<h1>`.
+- Se agregaron `meta description` y etiquetas **Open Graph** (`og:title`, `og:description`, `og:image`...).
+- El número de WhatsApp quedó en la constante `WHATSAPP_NUMERO`, arriba de todo en el script, con un `TODO` para cambiarlo por el real.
+- `renderJoyas` se reescribió: cada tarjeta es un `<button>` armado con `createElement` + `textContent`, sin `innerHTML`.
+
+### Conceptos que aprendí
+- **Open Graph:** son `<meta>` que lee WhatsApp/Instagram/Facebook para armar la "vista previa" cuando se pega un link (foto + título + descripción). No se ven en la página, solo al compartir.
+- **`textContent` vs `innerHTML`:** `innerHTML` interpreta el texto como HTML; si un nombre trae comillas o `<`, rompe la tarjeta (o deja meter código). `textContent` lo pone como texto puro, siempre. Se probó con el nombre `Anillo "Luna" <b>x</b>` y se mostró tal cual, sin romper nada.
+- **`<button>` en vez de `<div>` clickeable:** un botón recibe foco con Tab y se activa con Enter/Espacio sin programar nada extra; un `<div>` no. Por eso las tarjetas ahora se pueden usar con teclado y lector de pantalla.
+- **Dentro de un `<button>` solo va contenido "en línea"** (`<span>`, `<img>`), no `<div>` ni `<p>`. Para que un `<span>` se comporte como bloque (respete márgenes y padding) se le pone `display: block` en el CSS.
+- **Botones con estilo propio:** un `<button>` trae borde, relleno y fuente por defecto; se resetean con `border: none; padding: 0; font: inherit; color: inherit;`.
+- **Constantes de configuración arriba:** los datos que hay que cambiar (link del CSV, número de WhatsApp) conviene tenerlos juntos al principio, para no buscarlos por todo el código.
+
+### Pendiente
+- Reemplazar `WHATSAPP_NUMERO` por el número real de la dueña.
+- Agregar `og:url` cuando el sitio esté en GitHub Pages.
+- Siguientes tandas de la auditoría: contraste de colores, foco visible, interruptor accesible, modal accesible, mensaje cuando no hay resultados.
+
+---
+
+**Dónde quedamos:** tanda 1 de la auditoría lista (título, Open Graph, constante de WhatsApp, tarjetas como botones seguras). Próximo: número real de WhatsApp y tanda 2 (contraste y foco visible).
+
+## 06/10/2026 — Nueva identidad visual de Joyería Kalo
+
+### Cambios de hoy
+- Rediseño inspirado (no copiado) en una referencia de joyería: banda oscura arriba + zona clara para las joyas + detalles dorados finos.
+- Paleta nueva: **ciruela** `#24131d`, **champagne** `#d8bf8a`, **lino** `#efe6da`, **papel** `#faf6f0`, **tinta** `#2b1d24`.
+- Tipografías nuevas: **Bodoni Moda** (títulos) y **Jost** (texto).
+- El `<header>` salió de `.contenido` a su propia banda (`.portada`) con `fondo.avif` oscurecido detrás.
+- Tarjetas con foto cuadrada, borde fino y estado con puntito de color (sin mayúsculas).
+- Grilla: 2 columnas en celular, 3 en tablet, 4 en compu.
+- No se tocó nada del JavaScript.
+
+### Conceptos que aprendí
+- **Contraste WCAG AA:** el texto tiene que tener al menos 4.5:1 de contraste con su fondo. Se calcula con una fórmula a partir de los colores; antes de elegir la paleta se verificó cada par (el peor quedó en 5.1:1).
+- **Mobile first:** el CSS base es para el celular, y con `@media (min-width: 640px)` / `(min-width: 960px)` se agregan cambios para pantallas más grandes. Al revés que antes.
+- **`:focus-visible`:** dibuja un contorno solo cuando se navega con teclado (no al tocar con el dedo o hacer clic). Así nadie se pierde en la página.
+- **`@media (hover: hover)`:** aplica el efecto hover solo en dispositivos con mouse; en el celular el hover quedaba "pegado" después de tocar.
+- **`@media (prefers-reduced-motion: reduce)`:** respeta a quien pidió en su celular/compu menos animaciones.
+- **`aspect-ratio: 1 / 1`:** hace que la foto sea cuadrada sin importar el ancho de la tarjeta (en vez de una altura fija en px).
+- **Variables CSS (`--ciruela`, `--serif`...):** cambiar un color en `:root` lo cambia en toda la página.
+
+### Pendiente
+- El "Sin imagen" (SVG en JavaScript) sigue con los colores viejos; se puede actualizar a la paleta nueva.
+- Interruptor "Solo disponibles" sin nombre accesible (punto #6 de la auditoría).
+
+---
+
+**Dónde quedamos:** catálogo con la nueva identidad visual (ciruela + champagne, Bodoni Moda + Jost), mobile first, contraste AA y foco visible. Próximo: número real de WhatsApp, colores del "Sin imagen" y seguir con la auditoría (modal accesible, estado vacío).
+
+## 06/10/2026 — Crítica de diseño + filtros y modal mejorados
+
+### Qué encontró la crítica (impeccable)
+Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
+1. 4 de 5 joyas muestran "Sin imagen": en la planilla la columna `imagen` tiene `5`, `4`, `6`, `7` en vez de links.
+2. El número de WhatsApp sigue siendo falso (`5490000000000`).
+3. No hay precio (se decidió mostrar "Consultar precio").
+4. Faltan señales de confianza: logo, frase propia, pie de página con Instagram, envíos y medios de pago.
+
+### Cambios de hoy (filtros y modal)
+- **"Solo disponibles":** ahora todo el texto es tocable (el texto está dentro del `<label>`) y mide 44px de alto.
+- **Rótulos "Tipo" y "Material"** sobre cada fila de botones. La fila de material es más liviana (más chica, fondo papel, borde suave) para que se entienda que es un segundo nivel.
+- **Materiales según el tipo elegido:** si elegís Anillos, solo aparecen los materiales que hay en anillos. Si hay uno solo, la fila se esconde.
+- **Estado vacío:** si los filtros no dejan ninguna joya, aparece "No hay piezas disponibles con estos filtros por ahora" y un botón "Ver todas las joyas".
+- **"Consultar precio"** en cada tarjeta y en el modal, siempre en el mismo lugar.
+- **El modal muestra estado y material.** Si la joya está vendida o reservada, el botón dice "Consultar por una similar" y el mensaje de WhatsApp cambia.
+- **El botón "Atrás" del celular cierra el modal** en vez de sacarte de la página.
+- **El fondo no se desplaza** mientras el modal está abierto.
+- **Accesibilidad:** el modal se anuncia como diálogo, la × dice "Cerrar" y el foco va a la × al abrir y vuelve a la tarjeta al cerrar.
+- Si una joya no trae estado en la planilla, ya no aparece "undefined".
+
+### Conceptos que aprendí
+- **Jerarquía visual:** el orden en que el ojo lee la página. Lo importante tiene que pesar más (tamaño, color, posición) que lo secundario.
+- **Estado vacío (empty state):** qué se muestra cuando no hay nada para mostrar. Una pantalla en blanco parece un error; un mensaje con una salida tranquiliza.
+- **`hidden`:** atributo de HTML para esconder algo. Desde JS: `elemento.hidden = true`. Se agregó `[hidden] { display: none !important; }` porque si una clase pone `display: flex`, le gana al `hidden`.
+- **`role="dialog"` y `aria-modal`:** le dicen al lector de pantalla "esto es una ventana encima de la página".
+- **`history.pushState` y `popstate`:** `pushState` agrega una "página falsa" al historial al abrir el modal. Cuando apretás Atrás, el navegador dispara el evento `popstate` y ahí cerramos el modal.
+- **Trampa de foco:** con Tab, el foco da vueltas dentro del modal (× ↔ WhatsApp) en vez de irse a la página de atrás.
+
+### Pendiente
+- Cargar links reales de fotos en la planilla.
+- Poner el número real de WhatsApp.
+- Capa de marca: logo en la barra, frase en vez de "Catálogo" y pie de página.
+
+---
+
+**Dónde quedamos:** filtros y modal mejorados (crítica de diseño hecha). Próximo: **contenido** (fotos reales + número de WhatsApp) y después marca y confianza (logo, frase, pie de página).
+
+## 06/10/2026 — Animaciones y microinteracciones
+
+### Cambios de hoy
+- **Curva de movimiento única** `--ease-out: cubic-bezier(0.23, 1, 0.32, 1)` en `:root`, usada en todas las animaciones de movimiento.
+- **El modal ahora sí se anima:** abre en 240ms y cierra en 160ms (cerrar es más rápido que abrir), con un fundido del fondo y un leve `scale(0.97)` del contenido.
+- **El foco vuelve a la tarjeta cuando termina la animación de cierre**, también al reabrir rápido o al usar Atrás.
+- **Respuesta al presionar:** las tarjetas (`scale(0.985)`), los filtros y el botón de WhatsApp (`scale(0.97)`) se achican apenas al tocarlos.
+- **Hover solo con mouse** (`@media (hover: hover) and (pointer: fine)`) en tarjetas y filtros.
+- **Fotos con fundido:** arrancan invisibles y JS les pone `.cargada` al terminar de bajar (o al fallar, para que se vea el "Sin imagen").
+- **La fila de material y el estado vacío** aparecen con un fundido corto (`@starting-style`).
+- **`scrollbar-gutter: stable`:** en la compu la página ya no "salta" al abrir el modal.
+- **Interruptor:** la bolita se mueve con la curva nueva y además cambia de color con transición.
+- **`loading = "lazy"` va antes que `src`:** antes el navegador podía empezar a bajar la foto antes de enterarse de que podía esperar.
+- Se probó con Chromium: la trampa de foco sigue andando, y con el modal cerrado el Tab nunca entra al modal.
+
+### Conceptos que aprendí
+- **`display: none` no se anima:** si un elemento estaba en `display: none`, el navegador no tiene un "antes" desde donde animar. Por eso la transición vieja del modal nunca se veía.
+- **`visibility` con retraso:**
+  - `transition: visibility 0s linear 160ms` espera a que termine el fundido y recién ahí oculta.
+  - `visibility: hidden` también saca los botones del recorrido con Tab.
+- **Curvas de easing (aceleración):**
+  - `ease-out` arranca rápido y frena suave: se siente con respuesta inmediata.
+  - `ease-in` arranca lento y se siente pesado; no se usa en interfaces.
+- **`transitionend`:** un evento que avisa cuando terminó una transición. Se suma un `setTimeout` de respaldo por si el aviso no llega.
+- **`@starting-style`:** le dice al navegador "desde dónde arranca" un elemento que recién aparece, para animar su entrada sin JavaScript.
+- **Movimiento reducido ≠ cero animación:** a quien pidió menos movimiento se le sacan los zooms y desplazamientos (que marean), pero se le dejan los fundidos de opacidad y color.
+
+---
+
+**Dónde quedamos:** filtros, modal y animaciones listos (sin commit todavía). Próximo: **contenido** (fotos reales + número de WhatsApp) y después marca y confianza (logo, frase, pie de página).
+
+## 06/10/2026 — Capa de marca: textos, barra, pie y favicon
+
+### Cambios de hoy
+- **Frase nueva** en la portada: "Piezas elegidas una por una" (antes decía "Catálogo").
+- **Barra superior:** ahora muestra "Kalo" a la izquierda (al tocarlo vuelve arriba). El interruptor "Solo disponibles" se mudó a la zona de filtros, arriba de "Tipo".
+- **Botones del modal:** "Consultar esta pieza" y "Buscar una parecida". Los lectores de pantalla además escuchan "por WhatsApp".
+- **Pie de página nuevo:** cuidado de las joyas, atención personal en primera persona ("Escribime y te ayudo a elegir"), entrega en mano y un botón de WhatsApp que usa `WHATSAPP_NUMERO`.
+- **Título y vista previa** (lo que se ve al compartir el link por WhatsApp) con la frase nueva, más `og:url` con la dirección de GitHub Pages.
+- **Favicon:** una "K" champagne sobre ciruela.
+- Se probó con Chromium: recorrido con Tab, color del foco, textos del modal, link del pie e interruptor.
+
+### Conceptos que aprendí
+- **Copywriting:** un texto específico ("Piezas elegidas una por una") vende más que uno genérico ("Catálogo"), porque dice algo que solo es verdad de Kalo. Y no se promete nada que no exista (por eso no hay "garantía").
+- **Texto solo para lectores de pantalla (`.solo-lectores`):** se ve "Consultar esta pieza", pero una persona ciega escucha "Consultar esta pieza por WhatsApp". El texto existe, pero mide 1px y queda recortado.
+- **El contraste del foco depende del fondo:** el dorado oscuro se ve bien sobre lo claro (5.1:1), pero sobre el ciruela da 2.8:1 y casi desaparece. Por eso en la barra y en el pie el contorno es champagne.
+- **Especificidad en CSS:** `.pie p` le gana a `.pie-final` porque tiene más "puntaje" (clase + etiqueta contra una sola clase). Para ganarle se usa `.pie .pie-final`.
+- **Pie siempre abajo:** con `body` en columna (`display: flex; flex-direction: column`) y `flex: 1` en la zona de joyas, esa zona estira lo que falte y el pie no queda flotando a mitad de pantalla.
+- **Favicon en un data URI:** el dibujo SVG va escrito dentro del HTML y no hace falta un archivo aparte. La K está hecha con líneas (no con una letra) para que se vea igual en todos los equipos.
+
+### Pendiente
+- Poner el usuario de Instagram en `INSTAGRAM_USUARIO` (con eso el link aparece solo).
+- Confirmar si vende oro. Si no, sacar "oro, " de las dos descripciones del `<head>`.
+- Medios de pago (hay un TODO en el pie) y la política de cambios.
+- Ícono para la pantalla de inicio del iPhone (`apple-touch-icon`, necesita un PNG).
+- Sigue pendiente lo de antes: fotos reales y el número real de WhatsApp.
+
+---
+
+**Dónde quedamos:** capa de marca lista (sin commit todavía). Próximo: **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).

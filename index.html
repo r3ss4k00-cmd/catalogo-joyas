@@ -4,217 +4,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo de Joyas</title>
+  <title>Joyería Kalo · Piezas elegidas una por una</title>
+  <meta name="description" content="Anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas, elegidos uno por uno. Consultá por WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Joyería Kalo">
+  <meta property="og:url" content="https://r3ss4k00-cmd.github.io/catalogo-joyas/">
+  <meta property="og:title" content="Joyería Kalo · Piezas elegidas una por una">
+  <meta property="og:description" content="Anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas, elegidos uno por uno. Consultá por WhatsApp.">
+  <meta property="og:image" content="https://i.ibb.co/xK0nmdNm/211f1113-66e7-4bf8-bd37-477c349102b4.jpg">
+  <!-- Favicon: una "K" champagne sobre ciruela, dibujada con trazos (así se ve igual en todos los equipos).
+       Va dentro del HTML como "data URI": no hace falta un archivo aparte. Los # se escriben %23. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2324131d'/%3E%3Cpath d='M11 7v18M21.5 7 11.5 17.5M14.5 14.5 22 25' fill='none' stroke='%23d8bf8a' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    /* Paleta de Joyería Kalo (todos los textos pasan WCAG AA, mínimo 5:1) */
     :root {
-      --crema: #fdf8f2;
-      --crema-suave: #fffbf6;
-      --beige: #ecdfcc;
-      --terracota: #c17a5f;
-      --terracota-oscuro: #a8593f;
-      --dorado: #b08d4f;
-      --dorado-suave: #d9c19a;
-      --marron-texto: #4a3728;
-      --marron-suave: #8a7362;
+      --ciruela: #24131d;
+      --ciruela-hover: #3a2230;
+      --champagne: #d8bf8a;
+      --champagne-suave: #bfa77a;
+      --marfil: #f3ead9;
+      --lino: #efe6da;
+      --papel: #faf6f0;
+      --tinta: #2b1d24;
+      --gris-ciruela: #6b5560;
+      --oro-texto: #7a5a1e;
+      --borde: #e0d3bf;
+
+      --serif: 'Bodoni Moda', Georgia, serif;
+      --sans: 'Jost', system-ui, sans-serif;
+
+      /* Curva de movimiento de toda la página: arranca rápido y termina suave */
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    /* ---------- Base (pensada primero para el celular) ---------- */
+
+    /* Reserva el lugar de la barra de scroll: al abrir el modal la página no "salta" */
+    html {
+      scrollbar-gutter: stable;
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 300;
-      background-color: var(--crema);
-      background-image: linear-gradient(rgba(253, 248, 242, 0.7), rgba(250, 240, 224, 0.9)), url('fondo.avif');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      min-height: 100vh;
+      font-family: var(--sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      background-color: var(--lino);
+      color: var(--tinta);
       margin: 0;
-      padding: 0;
-      color: var(--marron-suave);
+      min-height: 100vh;
+      /* Columna: la zona de joyas estira lo que falte, así el pie queda siempre abajo */
+      display: flex;
+      flex-direction: column;
     }
+
+    /* Foco visible para quien navega con teclado */
+    :focus-visible {
+      outline: 2px solid var(--oro-texto);
+      outline-offset: 3px;
+    }
+
+    /* El atributo hidden siempre oculta, aunque la clase diga otro display */
+    [hidden] {
+      display: none !important;
+    }
+
+    /* Texto que no se ve pero que sí leen los lectores de pantalla
+       (por ejemplo, "por WhatsApp" en el botón del modal) */
+    .solo-lectores {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Al seleccionar texto se usan los colores de la marca, no el azul del navegador */
+    ::selection {
+      background-color: var(--champagne);
+      color: var(--ciruela);
+    }
+
+    /* ---------- Barra superior (oscura) ---------- */
 
     .barra-superior {
       position: sticky;
       top: 0;
       z-index: 10;
-      background-color: rgba(255, 251, 246, 0.88);
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid var(--dorado-suave);
-      padding: 14px 24px;
+      background-color: var(--ciruela);
+      border-bottom: 1px solid rgba(216, 191, 138, 0.25);
+      padding: 0 16px;
     }
 
-    .contenido {
-      padding: 56px 20px 70px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 56px;
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 600;
-      font-size: 2.6em;
-      letter-spacing: 0.5px;
-      color: var(--marron-texto);
-      margin: 0 0 10px 0;
-    }
-
-    .subtitulo {
-      font-size: 0.75em;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--dorado);
-      margin: 0 0 18px 0;
-    }
-
-    .subtitulo::after {
-      content: "";
-      display: block;
-      width: 46px;
-      height: 1px;
-      background-color: var(--dorado-suave);
-      margin: 16px auto 0 auto;
-    }
-
-    .catalogo {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 36px;
-      max-width: 1040px;
-      margin: 0 auto;
-    }
-
-    .tarjeta {
-      background-color: var(--crema-suave);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(122, 90, 60, 0.1);
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-
-    .tarjeta:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 30px rgba(122, 90, 60, 0.18);
-    }
-
-    .tarjeta img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s ease;
-    }
-
-    .tarjeta:hover img {
-      transform: scale(1.06);
-    }
-
-    .info {
-      padding: 18px 16px 20px;
-    }
-
-    .nombre {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1em;
-      font-weight: 600;
-      margin: 0 0 12px 0;
-      color: var(--marron-texto);
-    }
-
-    .estado {
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: 15px;
-      font-size: 0.68em;
-      font-weight: 500;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-    }
-
-    .disponible {
-      background-color: #e8efe1;
-      color: #55703f;
-    }
-
-    .vendida {
-      background-color: #f4e2df;
-      color: #9a4f42;
-    }
-
-    .reservada {
-      background-color: #f7ecd6;
-      color: #91711f;
-    }
-
-    .categorias {
-      max-width: 1040px;
-      margin: 0 auto 40px auto;
-      text-align: center;
-    }
-
-    .fila-categorias {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .boton-categoria {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.85em;
-      padding: 9px 20px;
-      border: 1px solid var(--dorado-suave);
-      border-radius: 20px;
-      background-color: var(--crema-suave);
-      color: var(--marron-texto);
-      cursor: pointer;
-      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
-    }
-
-    .boton-categoria:hover {
-      background-color: #f3e7d4;
-      border-color: var(--dorado);
-      transform: translateY(-1px);
-    }
-
-    .boton-categoria.activo {
-      background-image: linear-gradient(135deg, var(--terracota), var(--dorado));
-      border-color: transparent;
-      color: white;
-    }
-
-    .boton-volver {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.8em;
-      background: none;
-      border: none;
-      color: var(--dorado);
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .filtro {
+    .barra-interior {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
       max-width: 1040px;
       margin: 0 auto;
-      font-size: 0.85em;
-      color: var(--marron-suave);
+    }
+
+    /* Nombre de la marca en la barra: al tocarlo vuelve arriba */
+    .marca {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+      color: var(--champagne);
+      text-decoration: none;
+    }
+
+    /* En las zonas oscuras el foco dorado oscuro no se ve (2.8:1): se usa champagne (9.9:1) */
+    .barra-superior :focus-visible,
+    .pie :focus-visible {
+      outline-color: var(--champagne);
+    }
+
+    /* Todo el label (texto + interruptor) se puede tocar */
+    .opcion-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      font-size: 0.95rem;
+      color: var(--tinta);
+      cursor: pointer;
     }
 
     .switch {
       position: relative;
       display: inline-block;
-      width: 40px;
-      height: 22px;
+      width: 44px;
+      height: 24px;
       flex-shrink: 0;
     }
 
@@ -227,176 +155,693 @@
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ddd;
-      border-radius: 22px;
-      transition: background-color 0.2s ease;
+      inset: 0;
+      background-color: #8c7a82;
+      border-radius: 24px;
+      transition: background-color 200ms ease;
     }
 
     .slider::before {
       content: "";
       position: absolute;
-      height: 16px;
-      width: 16px;
+      height: 18px;
+      width: 18px;
       left: 3px;
       bottom: 3px;
-      background-color: white;
+      background-color: var(--marfil);
       border-radius: 50%;
-      transition: transform 0.2s ease;
+      /* La bolita se mueve (curva de movimiento) y cambia de color (ease) */
+      transition: transform 200ms var(--ease-out), background-color 200ms ease;
     }
 
+    /* Encendido: ciruela con bolita champagne, igual que un filtro activo.
+       (El champagne solo sobre el fondo claro casi no se ve: 1.45:1) */
     .switch input:checked + .slider {
-      background-color: var(--terracota);
+      background-color: var(--ciruela);
     }
 
     .switch input:checked + .slider::before {
-      transform: translateX(18px);
+      transform: translateX(20px);
+      background-color: var(--champagne);
     }
 
+    .switch input:focus-visible + .slider {
+      outline: 2px solid var(--oro-texto);
+      outline-offset: 3px;
+    }
+
+    /* ---------- Portada (la banda oscura con el nombre) ---------- */
+
+    .portada {
+      background-color: var(--ciruela);
+      background-image: linear-gradient(rgba(36, 19, 29, 0.84), rgba(36, 19, 29, 0.95)), url('fondo.avif');
+      background-size: cover;
+      background-position: center;
+      padding: 56px 16px 60px;
+    }
+
+    .portada-interior {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2.8rem, 12vw, 5.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      color: var(--marfil);
+      margin: 0;
+      text-wrap: balance;
+    }
+
+    .subtitulo {
+      font-size: 1.05rem;
+      color: var(--champagne);
+      margin: 20px 0 0 0;
+    }
+
+    .subtitulo::before {
+      content: "";
+      display: block;
+      width: 48px;
+      height: 1px;
+      background-color: var(--champagne);
+      margin-bottom: 16px;
+    }
+
+    /* ---------- Zona clara: categorías y catálogo ---------- */
+
+    .contenido {
+      flex: 1;
+      padding: 32px 16px 64px;
+    }
+
+    .categorias {
+      max-width: 1040px;
+      margin: 0 auto 32px auto;
+    }
+
+    .grupo-filtro {
+      margin-bottom: 20px;
+    }
+
+    .rotulo-filtro {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gris-ciruela);
+      margin: 0 0 8px 0;
+    }
+
+    .fila-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .boton-categoria {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      min-height: 44px;
+      padding: 8px 18px;
+      border: 1px solid var(--oro-texto);
+      border-radius: 4px;
+      background-color: transparent;
+      color: var(--tinta);
+      cursor: pointer;
+      transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 120ms var(--ease-out);
+    }
+
+    /* Al presionar, el botón se achica apenas: "te escuché" */
+    .boton-categoria:active {
+      transform: scale(0.97);
+    }
+
+    /* Fila de material: más liviana que la de tipo, para que se lea como "segundo nivel" */
+    .boton-categoria.secundario {
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-color: var(--borde);
+      background-color: var(--papel);
+    }
+
+
+    .boton-categoria.activo {
+      background-color: var(--ciruela);
+      border-color: var(--ciruela);
+      color: var(--champagne);
+    }
+
+    /* Hover solo con mouse: en el celular quedaría "pegado" después de tocar */
+    @media (hover: hover) and (pointer: fine) {
+      .boton-categoria:hover {
+        background-color: var(--papel);
+      }
+
+      .boton-categoria.secundario:hover {
+        border-color: var(--oro-texto);
+      }
+
+      .boton-categoria.activo:hover {
+        background-color: var(--ciruela);
+      }
+    }
+
+    /* La fila de material y el estado vacío aparecen con un fundido corto
+       (@starting-style = "desde dónde arranca" cuando el elemento aparece) */
+    .grupo-filtro,
+    .vacio {
+      transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+    }
+
+    @starting-style {
+      .grupo-filtro,
+      .vacio {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+    }
+
+    .boton-volver {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      min-height: 44px;
+      padding: 0;
+      background: none;
+      border: none;
+      color: var(--oro-texto);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    /* Mensajes de "Cargando…" o de error ocupan todo el ancho */
+    .catalogo > p {
+      grid-column: 1 / -1;
+      color: var(--gris-ciruela);
+    }
+
+    /* Estado vacío: cuando los filtros no dejan ninguna joya */
+    .vacio {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 20px;
+      background-color: var(--papel);
+      border: 1px solid var(--borde);
+      border-radius: 6px;
+    }
+
+    .vacio p {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      line-height: 1.35;
+      color: var(--tinta);
+      margin: 0 0 8px 0;
+      text-wrap: balance;
+    }
+
+    /* ---------- Tarjeta (es un <button>) ---------- */
+
+    .tarjeta {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      background-color: var(--papel);
+      border: 1px solid var(--borde);
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 250ms ease, transform 160ms var(--ease-out);
+    }
+
+    .tarjeta:active {
+      transform: scale(0.985);
+    }
+
+    .tarjeta img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto;
+      object-fit: cover;
+      display: block;
+      /* Arranca invisible; JavaScript le pone .cargada cuando la foto terminó de bajar */
+      opacity: 0;
+      transition: opacity 300ms ease, transform 500ms var(--ease-out);
+    }
+
+    .tarjeta img.cargada {
+      opacity: 1;
+    }
+
+    .info {
+      display: block;
+      padding: 12px 12px 14px;
+    }
+
+    .nombre {
+      display: block;
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--tinta);
+      margin: 0 0 4px 0;
+    }
+
+    /* Por ahora no se publican precios: siempre el mismo texto en el mismo lugar */
+    .precio {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--oro-texto);
+      margin: 0 0 8px 0;
+    }
+
+    /* Estado: un puntito de color + texto */
+    .estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .estado::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    .disponible {
+      color: #3f5a2c;
+    }
+
+    .vendida {
+      color: #8a3b2e;
+    }
+
+    .reservada {
+      color: #6e5310;
+    }
+
+    /* Efecto hover solo en dispositivos con mouse (en el celular queda "pegado") */
+    @media (hover: hover) and (pointer: fine) {
+      .tarjeta:hover {
+        border-color: var(--oro-texto);
+      }
+
+      .tarjeta:hover img {
+        transform: scale(1.03);
+      }
+    }
+
+    /* ---------- Modal ---------- */
+
+    /* El modal siempre está en la página (display: flex) pero invisible.
+       Al cerrar: se desvanece en 160ms y recién después se oculta (visibility).
+       Al abrir: aparece al instante y se desvanece hacia visible en 240ms. */
     .modal {
-      display: none;
+      display: flex;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms var(--ease-out), visibility 0s linear 160ms;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(35, 26, 18, 0.72);
+      inset: 0;
+      background-color: rgba(36, 19, 29, 0.82);
       align-items: center;
       justify-content: center;
       z-index: 100;
-      padding: 20px;
+      padding: 16px;
       overflow-y: auto;
     }
 
     .modal.activo {
-      display: flex;
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 240ms var(--ease-out), visibility 0s;
     }
 
     .modal-contenido {
       position: relative;
-      background-color: var(--crema-suave);
-      border-radius: 18px;
-      padding: 26px;
-      width: 380px;
+      background-color: var(--papel);
+      border-radius: 8px;
+      padding: 52px 20px 24px;
+      width: 420px;
       max-width: 100%;
       max-height: 90vh;
       overflow-y: auto;
       text-align: center;
-      box-shadow: 0 20px 45px rgba(35, 26, 18, 0.3);
-      transform: scale(0.94);
+      transform: scale(0.97) translateY(6px);
       opacity: 0;
-      transition: transform 0.25s ease, opacity 0.25s ease;
+      /* Cerrar (160ms) es más rápido que abrir (240ms) */
+      transition: transform 160ms var(--ease-out), opacity 160ms var(--ease-out);
     }
 
     .modal.activo .modal-contenido {
       transform: scale(1);
       opacity: 1;
+      transition-duration: 240ms;
     }
 
     .modal-contenido img {
       max-width: 100%;
       max-height: 60vh;
       object-fit: contain;
-      border-radius: 10px;
-      margin: 0 auto 18px auto;
+      border-radius: 4px;
+      margin: 0 auto 20px auto;
       display: block;
     }
 
     .modal-nombre {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3em;
-      font-weight: 600;
-      color: var(--marron-texto);
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--tinta);
+      margin: 0 0 10px 0;
+    }
+
+    .modal-detalle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--gris-ciruela);
       margin: 0 0 6px 0;
+    }
+
+    /* Rayita fina entre el estado y el material */
+    .estado:not([hidden]) + .modal-material:not([hidden]) {
+      padding-left: 12px;
+      border-left: 1px solid var(--borde);
+    }
+
+    .modal-precio {
+      font-size: 0.95rem;
+      margin: 0 0 22px 0;
     }
 
     .cerrar {
       position: absolute;
-      top: 8px;
-      right: 12px;
+      top: 4px;
+      right: 4px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
       background: none;
       border: none;
-      font-size: 1.8em;
-      line-height: 1;
-      color: var(--marron-suave);
+      color: var(--gris-ciruela);
       cursor: pointer;
     }
 
     .cerrar:hover {
-      color: var(--terracota-oscuro);
+      color: var(--tinta);
     }
 
     .boton-whatsapp {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin: 4px auto 0 auto;
-      padding: 10px 22px;
-      background-color: var(--terracota-oscuro);
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.85em;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 24px;
+      background-color: var(--ciruela);
+      color: var(--papel);
+      font-family: var(--sans);
+      font-size: 1rem;
       font-weight: 500;
-      border-radius: 24px;
+      border-radius: 4px;
       text-decoration: none;
-      box-shadow: 0 4px 12px rgba(168, 89, 63, 0.3);
-      transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+      transition: background-color 200ms ease, transform 120ms var(--ease-out);
+    }
+
+    .boton-whatsapp:active {
+      transform: scale(0.97);
     }
 
     .boton-whatsapp:hover {
-      background-color: #8f4a34;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(168, 89, 63, 0.35);
+      background-color: var(--ciruela-hover);
+    }
+
+    /* Variante para fondo oscuro (el pie): champagne con texto ciruela (9.9:1) */
+    .boton-whatsapp.claro {
+      background-color: var(--champagne);
+      color: var(--ciruela);
+    }
+
+    .boton-whatsapp.claro:hover {
+      background-color: var(--marfil);
+    }
+
+    /* ---------- Pie de página (oscuro, como la portada) ---------- */
+
+    .pie {
+      background-color: var(--ciruela);
+      color: var(--marfil);
+      padding: 56px 16px 32px;
+    }
+
+    .pie-interior {
+      display: grid;
+      gap: 40px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .pie h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 1.4rem;
+      line-height: 1.25;
+      color: var(--champagne);
+      margin: 0 0 12px 0;
+      text-wrap: balance;
+    }
+
+    .pie p {
+      margin: 0 0 8px 0;
+      max-width: 42ch;
+    }
+
+    .pie .boton-whatsapp {
+      margin-top: 16px;
+    }
+
+    .enlace-instagram {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      margin-left: 20px;
+      color: var(--champagne);
+      text-underline-offset: 4px;
+    }
+
+    /* ".pie .pie-final" y no solo ".pie-final": así le gana a la regla ".pie p" de arriba */
+    .pie .pie-final {
+      max-width: 1040px;
+      margin: 48px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid rgba(216, 191, 138, 0.25);
+      font-size: 0.85rem;
+      color: var(--champagne-suave);
+    }
+
+    /* ---------- Pantallas más grandes ---------- */
+
+    @media (min-width: 640px) {
+      .portada {
+        padding: 88px 24px 96px;
+      }
+
+      .contenido {
+        padding: 48px 24px 80px;
+      }
+
+      .catalogo {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .info {
+        padding: 16px 16px 18px;
+      }
+
+      .nombre {
+        font-size: 1.15rem;
+      }
+
+      .modal-contenido {
+        padding: 52px 28px 28px;
+      }
+
+      /* Pie en dos columnas: cuidado | contacto */
+      .pie {
+        padding: 72px 24px 32px;
+      }
+
+      .pie-interior {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+      }
+    }
+
+    @media (min-width: 960px) {
+      .catalogo {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+    }
+
+    /* Si la persona pidió menos movimiento: nada se mueve ni hace zoom,
+       pero se mantienen los fundidos de opacidad y color (esos no marean) */
+    @media (prefers-reduced-motion: reduce) {
+      .tarjeta:hover img,
+      .tarjeta:active,
+      .boton-categoria:active,
+      .boton-whatsapp:active,
+      .modal-contenido,
+      .modal.activo .modal-contenido,
+      .grupo-filtro,
+      .vacio {
+        transform: none;
+      }
+
+      .slider::before {
+        transition: background-color 200ms ease;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="barra-superior">
-    <div class="filtro">
-      <span>Solo disponibles</span>
-      <label class="switch">
-        <input type="checkbox" id="filtroDisponibles">
-        <span class="slider"></span>
-      </label>
+    <div class="barra-interior">
+      <a class="marca" href="#">Kalo</a>
     </div>
   </div>
 
-  <div class="contenido">
-    <header>
+  <header class="portada">
+    <div class="portada-interior">
       <h1>Joyería Kalo</h1>
-      <p class="subtitulo">Catálogo</p>
-    </header>
+      <p class="subtitulo">Piezas elegidas una por una</p>
+    </div>
+  </header>
 
+  <div class="contenido">
     <div class="categorias">
-      <div class="fila-categorias" id="botonesTipo"></div>
-      <div class="fila-categorias" id="botonesMaterial" style="display: none;"></div>
+      <!-- Va primero: así no se mueve cuando aparece o desaparece la fila de Material -->
+      <div class="grupo-filtro">
+        <label class="opcion-filtro">
+          <span>Solo disponibles</span>
+          <span class="switch">
+            <input type="checkbox" id="filtroDisponibles">
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+      <div class="grupo-filtro">
+        <p class="rotulo-filtro" id="rotuloTipo">Tipo</p>
+        <div class="fila-categorias" id="botonesTipo" role="group" aria-labelledby="rotuloTipo"></div>
+      </div>
+      <div class="grupo-filtro" id="grupoMaterial" hidden>
+        <p class="rotulo-filtro" id="rotuloMaterial">Material</p>
+        <div class="fila-categorias" id="botonesMaterial" role="group" aria-labelledby="rotuloMaterial"></div>
+      </div>
       <button class="boton-volver" id="botonVolver" style="display: none;">Ver todas las categorías</button>
     </div>
 
     <div class="catalogo" id="catalogo"></div>
   </div>
 
+  <footer class="pie">
+    <div class="pie-interior">
+      <section>
+        <h2>Cuidá tus joyas</h2>
+        <p>Guardá cada pieza por separado y sacátela antes de bañarte, ir a la pileta o ponerte perfume. Así conserva el brillo.</p>
+      </section>
+
+      <section>
+        <h2>¿Dudás con un talle o con un regalo?</h2>
+        <p>Escribime y te ayudo a elegir.</p>
+        <p>Coordino la entrega en mano por WhatsApp.</p>
+        <!-- TODO: medios de pago (efectivo, transferencia...) cuando estén confirmados -->
+        <a href="#" target="_blank" rel="noopener" class="boton-whatsapp claro" id="enlaceWhatsappPie">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+          </svg>
+          <span>Escribime por WhatsApp</span>
+        </a>
+        <!-- Se muestra solo cuando INSTAGRAM_USUARIO tiene un valor (ver el script) -->
+        <a href="#" target="_blank" rel="noopener" class="enlace-instagram" id="enlaceInstagram" hidden>Instagram</a>
+      </section>
+    </div>
+
+    <p class="pie-final">© 2026 Joyería Kalo</p>
+  </footer>
+
   <div class="modal" id="modal">
-    <div class="modal-contenido">
-      <button class="cerrar" id="cerrarModal">&times;</button>
-      <img id="modalImagen" src="" alt="">
+    <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="modalNombre">
+      <button class="cerrar" id="cerrarModal" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+      <img id="modalImagen" alt="">
       <p class="modal-nombre" id="modalNombre"></p>
+      <p class="modal-detalle">
+        <span class="estado" id="modalEstado"></span>
+        <span class="modal-material" id="modalMaterial"></span>
+      </p>
+      <p class="precio modal-precio">Consultar precio</p>
       <a href="#" target="_blank" rel="noopener" class="boton-whatsapp" id="enlaceWhatsapp">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
           <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
         </svg>
-        Consultar por WhatsApp
+        <span id="textoWhatsapp">Consultar esta pieza</span><span class="solo-lectores"> por WhatsApp</span>
       </a>
     </div>
   </div>
 
   <script>
     const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAC_qdJr0VEEpHaUNwoEZ6uTwQN4eVL9ybpvr05M0qbkXiW--lqFXc2Kv2fut0ZfEiG9zab2y82Zt-/pub?output=csv";
+
+    // TODO: reemplazar por el número real de WhatsApp (formato 549 + característica + número, sin + ni espacios)
+    const WHATSAPP_NUMERO = "5490000000000";
+
+    // TODO: poner el usuario de Instagram sin @ (mientras esté vacío, el link no se muestra)
+    const INSTAGRAM_USUARIO = "";
+
+    // Pie de página: botón de WhatsApp general (no habla de una joya en particular)
+    const enlaceWhatsappPie = document.getElementById("enlaceWhatsappPie");
+    const mensajePie = "¡Hola! Vi el catálogo de Joyería Kalo y quería hacerte una consulta.";
+    enlaceWhatsappPie.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensajePie)}`;
+
+    if (INSTAGRAM_USUARIO) {
+      const enlaceInstagram = document.getElementById("enlaceInstagram");
+      enlaceInstagram.href = `https://www.instagram.com/${INSTAGRAM_USUARIO}/`;
+      enlaceInstagram.hidden = false;
+    }
 
     let joyas = [];
 
@@ -442,6 +887,7 @@
 
     const contenedorTipos = document.getElementById("botonesTipo");
     const contenedorMateriales = document.getElementById("botonesMaterial");
+    const grupoMaterial = document.getElementById("grupoMaterial");
     const botonVolver = document.getElementById("botonVolver");
 
     let tipoSeleccionado = null;
@@ -450,28 +896,94 @@
     const modal = document.getElementById("modal");
     const modalImagen = document.getElementById("modalImagen");
     const modalNombre = document.getElementById("modalNombre");
+    const modalEstado = document.getElementById("modalEstado");
+    const modalMaterial = document.getElementById("modalMaterial");
     const botonCerrar = document.getElementById("cerrarModal");
     const enlaceWhatsapp = document.getElementById("enlaceWhatsapp");
-    const NUMERO_WHATSAPP = "5490000000000";
+    const textoWhatsapp = document.getElementById("textoWhatsapp");
+
+    // La tarjeta que abrió el modal, para devolverle el foco al cerrar
+    let tarjetaQueAbrio = null;
 
     modalImagen.onerror = function () {
       manejarErrorImagen(modalImagen);
     };
 
-    function abrirModal(joya) {
+    function abrirModal(joya, tarjeta) {
       modalImagen.src = normalizarUrlImagen(joya.imagen);
       modalImagen.alt = joya.nombre;
       modalNombre.textContent = joya.nombre;
 
-      const mensaje = `¡Hola! Me interesa esta joya: ${joya.nombre}, ¿me pasás más info?`;
-      enlaceWhatsapp.href = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+      // Estado con su puntito de color (si la planilla no trae estado, no se muestra)
+      modalEstado.className = "estado " + joya.estado;
+      modalEstado.textContent = etiquetas[joya.estado] || "";
+      modalEstado.hidden = !etiquetas[joya.estado];
 
+      modalMaterial.textContent = joya.material ? capitalizar(joya.material) : "";
+      modalMaterial.hidden = !joya.material;
+
+      // Si ya no está disponible, se ofrece consultar por una parecida
+      let mensaje;
+      if (joya.estado === "disponible") {
+        mensaje = `¡Hola! Me interesa esta joya: ${joya.nombre}, ¿me pasás el precio y más info?`;
+        textoWhatsapp.textContent = "Consultar esta pieza";
+      } else {
+        mensaje = `¡Hola! Vi esta joya en el catálogo: ${joya.nombre}. ¿Tenés alguna similar?`;
+        textoWhatsapp.textContent = "Buscar una parecida";
+      }
+      enlaceWhatsapp.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`;
+
+      tarjetaQueAbrio = tarjeta;
       modal.classList.add("activo");
+      document.body.style.overflow = "hidden";
+      botonCerrar.focus();
+
+      // Se agrega una "página" al historial, así el botón Atrás del celular cierra el modal
+      history.pushState({ modalAbierto: true }, "");
     }
 
-    function cerrarModal() {
+    // Oculta el modal (sin tocar el historial)
+    function ocultarModal() {
+      if (!modal.classList.contains("activo")) return;
+
       modal.classList.remove("activo");
+      document.body.style.overflow = "";
+
+      // El foco vuelve a la tarjeta cuando termina la animación de cierre.
+      // "transitionend" avisa cuando termina el fundido; el setTimeout es una
+      // red de seguridad por si ese aviso no llega.
+      const tarjeta = tarjetaQueAbrio;
+
+      function alTerminarCierre(event) {
+        // Ignorar avisos de otras transiciones (por ejemplo, la del contenido)
+        if (event && (event.target !== modal || event.propertyName !== "opacity")) return;
+
+        modal.removeEventListener("transitionend", alTerminarCierre);
+        clearTimeout(temporizadorCierre);
+
+        // Si mientras tanto se volvió a abrir el modal, no se toca el foco
+        if (!modal.classList.contains("activo") && tarjeta) {
+          tarjeta.focus();
+        }
+      }
+
+      modal.addEventListener("transitionend", alTerminarCierre);
+      const temporizadorCierre = setTimeout(alTerminarCierre, 300);
     }
+
+    // Cerrar con la ×, Escape o tocando afuera: volvemos atrás en el historial,
+    // y eso dispara "popstate", que es quien oculta el modal
+    function cerrarModal() {
+      if (!modal.classList.contains("activo")) return;
+
+      if (history.state && history.state.modalAbierto) {
+        history.back();
+      } else {
+        ocultarModal();
+      }
+    }
+
+    window.addEventListener("popstate", ocultarModal);
 
     botonCerrar.addEventListener("click", cerrarModal);
 
@@ -485,25 +997,71 @@
       if (event.key === "Escape") {
         cerrarModal();
       }
+
+      // Con Tab, el foco da vueltas entre la × y el botón de WhatsApp (no se escapa del modal)
+      if (event.key === "Tab" && modal.classList.contains("activo")) {
+        if (event.shiftKey && document.activeElement === botonCerrar) {
+          event.preventDefault();
+          enlaceWhatsapp.focus();
+        } else if (!event.shiftKey && document.activeElement === enlaceWhatsapp) {
+          event.preventDefault();
+          botonCerrar.focus();
+        }
+      }
     });
 
     function renderJoyas(lista) {
       contenedor.innerHTML = "";
 
       lista.forEach(function (joya) {
-        const tarjeta = document.createElement("div");
+        const tarjeta = document.createElement("button");
+        tarjeta.type = "button";
         tarjeta.className = "tarjeta";
 
-        tarjeta.innerHTML = `
-          <img src="${normalizarUrlImagen(joya.imagen)}" alt="${joya.nombre}" loading="lazy" onerror="manejarErrorImagen(this)">
-          <div class="info">
-            <p class="nombre">${joya.nombre}</p>
-            <span class="estado ${joya.estado}">${etiquetas[joya.estado]}</span>
-          </div>
-        `;
+        const imagen = document.createElement("img");
+
+        // Cuando la foto termina de bajar, aparece con un fundido (.cargada)
+        imagen.onload = function () {
+          imagen.classList.add("cargada");
+        };
+        // Si falla, se pone "Sin imagen" y también se muestra (si no, quedaría invisible)
+        imagen.onerror = function () {
+          manejarErrorImagen(imagen);
+          imagen.classList.add("cargada");
+        };
+
+        // loading va antes que src, para que el navegador sepa que puede esperar
+        imagen.loading = "lazy";
+        imagen.alt = joya.nombre;
+        imagen.src = normalizarUrlImagen(joya.imagen);
+
+        const info = document.createElement("span");
+        info.className = "info";
+
+        const nombre = document.createElement("span");
+        nombre.className = "nombre";
+        nombre.textContent = joya.nombre;
+
+        const precio = document.createElement("span");
+        precio.className = "precio";
+        precio.textContent = "Consultar precio";
+
+        info.appendChild(nombre);
+        info.appendChild(precio);
+
+        // Solo se muestra el estado si la planilla trae uno conocido (así nunca dice "undefined")
+        if (etiquetas[joya.estado]) {
+          const estado = document.createElement("span");
+          estado.className = "estado " + joya.estado;
+          estado.textContent = etiquetas[joya.estado];
+          info.appendChild(estado);
+        }
+
+        tarjeta.appendChild(imagen);
+        tarjeta.appendChild(info);
 
         tarjeta.addEventListener("click", function () {
-          abrirModal(joya);
+          abrirModal(joya, tarjeta);
         });
 
         contenedor.appendChild(tarjeta);
@@ -596,6 +1154,39 @@
       }
 
       renderJoyas(lista);
+
+      // Estado vacío: si los filtros no dejan ninguna joya, se explica y se ofrece volver
+      if (lista.length === 0) {
+        mostrarVacio();
+      }
+    }
+
+    function mostrarVacio() {
+      const vacio = document.createElement("div");
+      vacio.className = "vacio";
+
+      const mensaje = document.createElement("p");
+
+      if (joyas.length === 0) {
+        mensaje.textContent = "Todavía no hay joyas cargadas en el catálogo.";
+        vacio.appendChild(mensaje);
+      } else {
+        mensaje.textContent = "No hay piezas disponibles con estos filtros por ahora.";
+
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "boton-volver";
+        boton.textContent = "Ver todas las joyas";
+        boton.addEventListener("click", function () {
+          checkbox.checked = false;
+          limpiarFiltros();
+        });
+
+        vacio.appendChild(mensaje);
+        vacio.appendChild(boton);
+      }
+
+      contenedor.appendChild(vacio);
     }
 
     function actualizarBotonVolver() {
@@ -611,8 +1202,9 @@
 
       tipos.forEach(function (tipo) {
         const boton = document.createElement("button");
+        boton.type = "button";
         boton.className = "boton-categoria";
-        boton.textContent = etiquetasTipo[tipo];
+        boton.textContent = etiquetasTipo[tipo] || capitalizar(tipo);
 
         if (tipo === tipoSeleccionado) {
           boton.classList.add("activo");
@@ -621,7 +1213,16 @@
         boton.addEventListener("click", function () {
           tipoSeleccionado = tipo;
           materialSeleccionado = null;
-          contenedorMateriales.style.display = "flex";
+
+          // Solo los materiales que existen para este tipo (así no hay combinaciones vacías)
+          const joyasDelTipo = joyas.filter(function (joya) {
+            return joya.tipo === tipo;
+          });
+          materiales = obtenerValoresUnicos(joyasDelTipo, "material");
+
+          // Con un solo material no hay nada que elegir: la fila se esconde
+          grupoMaterial.hidden = materiales.length < 2;
+
           renderBotonesTipo();
           renderBotonesMaterial();
           actualizarBotonVolver();
@@ -637,7 +1238,8 @@
 
       materiales.forEach(function (material) {
         const boton = document.createElement("button");
-        boton.className = "boton-categoria";
+        boton.type = "button";
+        boton.className = "boton-categoria secundario";
         boton.textContent = capitalizar(material);
 
         if (material === materialSeleccionado) {
@@ -655,15 +1257,18 @@
       });
     }
 
-    botonVolver.addEventListener("click", function () {
+    function limpiarFiltros() {
       tipoSeleccionado = null;
       materialSeleccionado = null;
-      contenedorMateriales.style.display = "none";
+      materiales = [];
+      grupoMaterial.hidden = true;
       renderBotonesTipo();
       renderBotonesMaterial();
       actualizarBotonVolver();
       actualizarCatalogo();
-    });
+    }
+
+    botonVolver.addEventListener("click", limpiarFiltros);
 
     checkbox.addEventListener("change", actualizarCatalogo);
 
@@ -679,7 +1284,6 @@
       .then(function (textoCSV) {
         joyas = csvAJoyas(textoCSV);
         tipos = obtenerValoresUnicos(joyas, "tipo");
-        materiales = obtenerValoresUnicos(joyas, "material");
 
         renderBotonesTipo();
         renderBotonesMaterial();
