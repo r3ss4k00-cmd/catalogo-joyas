@@ -559,3 +559,26 @@ Solo quedan dos avisos: caché y compresión. Dependen del servidor (GitHub Page
 ---
 
 **Dónde quedamos:** README listo, **sin commit**. Próximo: revisarlo en GitHub y, después, **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
+
+## 07/10/2026 — Historial limpio de datos personales
+
+### Cambios de hoy
+- Se reescribió todo el historial con `git filter-repo --replace-text` para sacar los datos personales de la dueña (su nombre, cómo se la nombraba y la característica del número de prueba).
+- El título viejo de las primeras versiones pasó a ser "Joyería Kalo".
+- Ahora hay una sola rama (`main`) y no hay remoto: el repo se va a recrear en GitHub.
+- Se comprobó que los archivos finales son idénticos a los de antes de reescribir y que la página carga las 5 joyas servida en la compu.
+
+### Conceptos que aprendí
+- **Git guarda todas las versiones:** borrar un texto en un commit nuevo no alcanza, porque sigue en los commits anteriores. Para sacarlo de verdad hay que reescribir el historial.
+- **Reescribir cambia los hashes:** cada commit nuevo tiene otro hash, así que hay que hacer `push --force` a un repo nuevo o limpio. Y antes, siempre una copia de seguridad.
+- **Reemplazos con cuidado:** una palabra corta también aparece dentro de otras (si reemplazás "pan", también cambia "pantalla"). Por eso se reemplazan frases completas, y las largas van primero ("mi X" antes que "X").
+- **Commits que quedan vacíos se descartan:** el commit que reemplazaba los textos quedó sin cambios (los commits anteriores ya los tenían) y `filter-repo` lo sacó solo.
+- **Comparar árboles:** el hash del árbol (`HEAD^{tree}`) resume todos los archivos de un commit. Si dos árboles tienen el mismo hash, los archivos son idénticos.
+
+### Pendiente
+- Crear el repo nuevo en GitHub, agregar el remoto y hacer push (con GitHub Pages activado de nuevo).
+- Hacer el commit de esta entrada.
+
+---
+
+**Dónde quedamos:** historial limpio, solo en la compu, **sin push**. Próximo: recrear el repo en GitHub y publicar. Después, **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
