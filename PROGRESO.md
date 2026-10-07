@@ -300,3 +300,41 @@
 ---
 
 **Dónde quedamos:** catálogo con la nueva identidad visual (ciruela + champagne, Bodoni Moda + Jost), mobile first, contraste AA y foco visible. Próximo: número real de WhatsApp, colores del "Sin imagen" y seguir con la auditoría (modal accesible, estado vacío).
+
+## 06/10/2026 — Crítica de diseño + filtros y modal mejorados
+
+### Qué encontró la crítica (impeccable)
+Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
+1. 4 de 5 joyas muestran "Sin imagen": en la planilla la columna `imagen` tiene `5`, `4`, `6`, `7` en vez de links.
+2. El número de WhatsApp sigue siendo falso (`5490000000000`).
+3. No hay precio (se decidió mostrar "Consultar precio").
+4. Faltan señales de confianza: logo, frase propia, pie de página con Instagram, envíos y medios de pago.
+
+### Cambios de hoy (filtros y modal)
+- **"Solo disponibles":** ahora todo el texto es tocable (el texto está dentro del `<label>`) y mide 44px de alto.
+- **Rótulos "Tipo" y "Material"** sobre cada fila de botones. La fila de material es más liviana (más chica, fondo papel, borde suave) para que se entienda que es un segundo nivel.
+- **Materiales según el tipo elegido:** si elegís Anillos, solo aparecen los materiales que hay en anillos. Si hay uno solo, la fila se esconde.
+- **Estado vacío:** si los filtros no dejan ninguna joya, aparece "No hay piezas disponibles con estos filtros por ahora" y un botón "Ver todas las joyas".
+- **"Consultar precio"** en cada tarjeta y en el modal, siempre en el mismo lugar.
+- **El modal muestra estado y material.** Si la joya está vendida o reservada, el botón dice "Consultar por una similar" y el mensaje de WhatsApp cambia.
+- **El botón "Atrás" del celular cierra el modal** en vez de sacarte de la página.
+- **El fondo no se desplaza** mientras el modal está abierto.
+- **Accesibilidad:** el modal se anuncia como diálogo, la × dice "Cerrar" y el foco va a la × al abrir y vuelve a la tarjeta al cerrar.
+- Si una joya no trae estado en la planilla, ya no aparece "undefined".
+
+### Conceptos que aprendí
+- **Jerarquía visual:** el orden en que el ojo lee la página. Lo importante tiene que pesar más (tamaño, color, posición) que lo secundario.
+- **Estado vacío (empty state):** qué se muestra cuando no hay nada para mostrar. Una pantalla en blanco parece un error; un mensaje con una salida tranquiliza.
+- **`hidden`:** atributo de HTML para esconder algo. Desde JS: `elemento.hidden = true`. Se agregó `[hidden] { display: none !important; }` porque si una clase pone `display: flex`, le gana al `hidden`.
+- **`role="dialog"` y `aria-modal`:** le dicen al lector de pantalla "esto es una ventana encima de la página".
+- **`history.pushState` y `popstate`:** `pushState` agrega una "página falsa" al historial al abrir el modal. Cuando apretás Atrás, el navegador dispara el evento `popstate` y ahí cerramos el modal.
+- **Trampa de foco:** con Tab, el foco da vueltas dentro del modal (× ↔ WhatsApp) en vez de irse a la página de atrás.
+
+### Pendiente
+- Cargar links reales de fotos en la planilla.
+- Poner el número real de WhatsApp.
+- Capa de marca: logo en la barra, frase en vez de "Catálogo" y pie de página.
+
+---
+
+**Dónde quedamos:** filtros y modal mejorados (crítica de diseño hecha). Próximo: **contenido** (fotos reales + número de WhatsApp) y después marca y confianza (logo, frase, pie de página).

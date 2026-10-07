@@ -51,6 +51,11 @@
       outline-offset: 3px;
     }
 
+    /* El atributo hidden siempre oculta, aunque la clase diga otro display */
+    [hidden] {
+      display: none !important;
+    }
+
     /* ---------- Barra superior (oscura) ---------- */
 
     .barra-superior {
@@ -59,18 +64,25 @@
       z-index: 10;
       background-color: var(--ciruela);
       border-bottom: 1px solid rgba(216, 191, 138, 0.25);
-      padding: 10px 16px;
+      padding: 0 16px;
     }
 
     .filtro {
       display: flex;
-      align-items: center;
       justify-content: flex-end;
-      gap: 12px;
       max-width: 1040px;
       margin: 0 auto;
+    }
+
+    /* Todo el label (texto + interruptor) se puede tocar */
+    .opcion-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
       font-size: 0.9rem;
       color: var(--champagne-suave);
+      cursor: pointer;
     }
 
     .switch {
@@ -174,11 +186,22 @@
       margin: 0 auto 32px auto;
     }
 
+    .grupo-filtro {
+      margin-bottom: 20px;
+    }
+
+    .rotulo-filtro {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gris-ciruela);
+      margin: 0 0 8px 0;
+    }
+
     .fila-categorias {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 12px;
     }
 
     .boton-categoria {
@@ -196,6 +219,18 @@
 
     .boton-categoria:hover {
       background-color: var(--papel);
+    }
+
+    /* Fila de material: más liviana que la de tipo, para que se lea como "segundo nivel" */
+    .boton-categoria.secundario {
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-color: var(--borde);
+      background-color: var(--papel);
+    }
+
+    .boton-categoria.secundario:hover {
+      border-color: var(--oro-texto);
     }
 
     .boton-categoria.activo {
@@ -229,6 +264,25 @@
     .catalogo > p {
       grid-column: 1 / -1;
       color: var(--gris-ciruela);
+    }
+
+    /* Estado vacío: cuando los filtros no dejan ninguna joya */
+    .vacio {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 20px;
+      background-color: var(--papel);
+      border: 1px solid var(--borde);
+      border-radius: 6px;
+    }
+
+    .vacio p {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      line-height: 1.35;
+      color: var(--tinta);
+      margin: 0 0 8px 0;
+      text-wrap: balance;
     }
 
     /* ---------- Tarjeta (es un <button>) ---------- */
@@ -270,7 +324,15 @@
       font-weight: 500;
       line-height: 1.25;
       color: var(--tinta);
-      margin: 0 0 6px 0;
+      margin: 0 0 4px 0;
+    }
+
+    /* Por ahora no se publican precios: siempre el mismo texto en el mismo lugar */
+    .precio {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--oro-texto);
+      margin: 0 0 8px 0;
     }
 
     /* Estado: un puntito de color + texto */
@@ -365,7 +427,29 @@
       font-weight: 400;
       line-height: 1.2;
       color: var(--tinta);
-      margin: 0 0 20px 0;
+      margin: 0 0 10px 0;
+    }
+
+    .modal-detalle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--gris-ciruela);
+      margin: 0 0 6px 0;
+    }
+
+    /* Rayita fina entre el estado y el material */
+    .estado:not([hidden]) + .modal-material:not([hidden]) {
+      padding-left: 12px;
+      border-left: 1px solid var(--borde);
+    }
+
+    .modal-precio {
+      font-size: 0.95rem;
+      margin: 0 0 22px 0;
     }
 
     .cerrar {
@@ -374,10 +458,12 @@
       right: 4px;
       width: 44px;
       height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
       background: none;
       border: none;
-      font-size: 1.8rem;
-      line-height: 1;
       color: var(--gris-ciruela);
       cursor: pointer;
     }
@@ -459,10 +545,12 @@
 
   <div class="barra-superior">
     <div class="filtro">
-      <span>Solo disponibles</span>
-      <label class="switch">
-        <input type="checkbox" id="filtroDisponibles">
-        <span class="slider"></span>
+      <label class="opcion-filtro">
+        <span>Solo disponibles</span>
+        <span class="switch">
+          <input type="checkbox" id="filtroDisponibles">
+          <span class="slider"></span>
+        </span>
       </label>
     </div>
   </div>
@@ -476,8 +564,14 @@
 
   <div class="contenido">
     <div class="categorias">
-      <div class="fila-categorias" id="botonesTipo"></div>
-      <div class="fila-categorias" id="botonesMaterial" style="display: none;"></div>
+      <div class="grupo-filtro">
+        <p class="rotulo-filtro" id="rotuloTipo">Tipo</p>
+        <div class="fila-categorias" id="botonesTipo" role="group" aria-labelledby="rotuloTipo"></div>
+      </div>
+      <div class="grupo-filtro" id="grupoMaterial" hidden>
+        <p class="rotulo-filtro" id="rotuloMaterial">Material</p>
+        <div class="fila-categorias" id="botonesMaterial" role="group" aria-labelledby="rotuloMaterial"></div>
+      </div>
       <button class="boton-volver" id="botonVolver" style="display: none;">Ver todas las categorías</button>
     </div>
 
@@ -485,15 +579,24 @@
   </div>
 
   <div class="modal" id="modal">
-    <div class="modal-contenido">
-      <button class="cerrar" id="cerrarModal">&times;</button>
-      <img id="modalImagen" src="" alt="">
+    <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="modalNombre">
+      <button class="cerrar" id="cerrarModal" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+      <img id="modalImagen" alt="">
       <p class="modal-nombre" id="modalNombre"></p>
+      <p class="modal-detalle">
+        <span class="estado" id="modalEstado"></span>
+        <span class="modal-material" id="modalMaterial"></span>
+      </p>
+      <p class="precio modal-precio">Consultar precio</p>
       <a href="#" target="_blank" rel="noopener" class="boton-whatsapp" id="enlaceWhatsapp">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
           <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
         </svg>
-        Consultar por WhatsApp
+        <span id="textoWhatsapp">Consultar por WhatsApp</span>
       </a>
     </div>
   </div>
@@ -548,6 +651,7 @@
 
     const contenedorTipos = document.getElementById("botonesTipo");
     const contenedorMateriales = document.getElementById("botonesMaterial");
+    const grupoMaterial = document.getElementById("grupoMaterial");
     const botonVolver = document.getElementById("botonVolver");
 
     let tipoSeleccionado = null;
@@ -556,27 +660,77 @@
     const modal = document.getElementById("modal");
     const modalImagen = document.getElementById("modalImagen");
     const modalNombre = document.getElementById("modalNombre");
+    const modalEstado = document.getElementById("modalEstado");
+    const modalMaterial = document.getElementById("modalMaterial");
     const botonCerrar = document.getElementById("cerrarModal");
     const enlaceWhatsapp = document.getElementById("enlaceWhatsapp");
+    const textoWhatsapp = document.getElementById("textoWhatsapp");
+
+    // La tarjeta que abrió el modal, para devolverle el foco al cerrar
+    let tarjetaQueAbrio = null;
 
     modalImagen.onerror = function () {
       manejarErrorImagen(modalImagen);
     };
 
-    function abrirModal(joya) {
+    function abrirModal(joya, tarjeta) {
       modalImagen.src = normalizarUrlImagen(joya.imagen);
       modalImagen.alt = joya.nombre;
       modalNombre.textContent = joya.nombre;
 
-      const mensaje = `¡Hola! Me interesa esta joya: ${joya.nombre}, ¿me pasás más info?`;
+      // Estado con su puntito de color (si la planilla no trae estado, no se muestra)
+      modalEstado.className = "estado " + joya.estado;
+      modalEstado.textContent = etiquetas[joya.estado] || "";
+      modalEstado.hidden = !etiquetas[joya.estado];
+
+      modalMaterial.textContent = joya.material ? capitalizar(joya.material) : "";
+      modalMaterial.hidden = !joya.material;
+
+      // Si ya no está disponible, se ofrece consultar por una parecida
+      let mensaje;
+      if (joya.estado === "disponible") {
+        mensaje = `¡Hola! Me interesa esta joya: ${joya.nombre}, ¿me pasás el precio y más info?`;
+        textoWhatsapp.textContent = "Consultar por WhatsApp";
+      } else {
+        mensaje = `¡Hola! Vi esta joya en el catálogo: ${joya.nombre}. ¿Tenés alguna similar?`;
+        textoWhatsapp.textContent = "Consultar por una similar";
+      }
       enlaceWhatsapp.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`;
 
+      tarjetaQueAbrio = tarjeta;
       modal.classList.add("activo");
+      document.body.style.overflow = "hidden";
+      botonCerrar.focus();
+
+      // Se agrega una "página" al historial, así el botón Atrás del celular cierra el modal
+      history.pushState({ modalAbierto: true }, "");
     }
 
-    function cerrarModal() {
+    // Oculta el modal (sin tocar el historial)
+    function ocultarModal() {
+      if (!modal.classList.contains("activo")) return;
+
       modal.classList.remove("activo");
+      document.body.style.overflow = "";
+
+      if (tarjetaQueAbrio) {
+        tarjetaQueAbrio.focus();
+      }
     }
+
+    // Cerrar con la ×, Escape o tocando afuera: volvemos atrás en el historial,
+    // y eso dispara "popstate", que es quien oculta el modal
+    function cerrarModal() {
+      if (!modal.classList.contains("activo")) return;
+
+      if (history.state && history.state.modalAbierto) {
+        history.back();
+      } else {
+        ocultarModal();
+      }
+    }
+
+    window.addEventListener("popstate", ocultarModal);
 
     botonCerrar.addEventListener("click", cerrarModal);
 
@@ -589,6 +743,17 @@
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") {
         cerrarModal();
+      }
+
+      // Con Tab, el foco da vueltas entre la × y el botón de WhatsApp (no se escapa del modal)
+      if (event.key === "Tab" && modal.classList.contains("activo")) {
+        if (event.shiftKey && document.activeElement === botonCerrar) {
+          event.preventDefault();
+          enlaceWhatsapp.focus();
+        } else if (!event.shiftKey && document.activeElement === enlaceWhatsapp) {
+          event.preventDefault();
+          botonCerrar.focus();
+        }
       }
     });
 
@@ -615,17 +780,26 @@
         nombre.className = "nombre";
         nombre.textContent = joya.nombre;
 
-        const estado = document.createElement("span");
-        estado.className = "estado " + joya.estado;
-        estado.textContent = etiquetas[joya.estado];
+        const precio = document.createElement("span");
+        precio.className = "precio";
+        precio.textContent = "Consultar precio";
 
         info.appendChild(nombre);
-        info.appendChild(estado);
+        info.appendChild(precio);
+
+        // Solo se muestra el estado si la planilla trae uno conocido (así nunca dice "undefined")
+        if (etiquetas[joya.estado]) {
+          const estado = document.createElement("span");
+          estado.className = "estado " + joya.estado;
+          estado.textContent = etiquetas[joya.estado];
+          info.appendChild(estado);
+        }
+
         tarjeta.appendChild(imagen);
         tarjeta.appendChild(info);
 
         tarjeta.addEventListener("click", function () {
-          abrirModal(joya);
+          abrirModal(joya, tarjeta);
         });
 
         contenedor.appendChild(tarjeta);
@@ -718,6 +892,39 @@
       }
 
       renderJoyas(lista);
+
+      // Estado vacío: si los filtros no dejan ninguna joya, se explica y se ofrece volver
+      if (lista.length === 0) {
+        mostrarVacio();
+      }
+    }
+
+    function mostrarVacio() {
+      const vacio = document.createElement("div");
+      vacio.className = "vacio";
+
+      const mensaje = document.createElement("p");
+
+      if (joyas.length === 0) {
+        mensaje.textContent = "Todavía no hay joyas cargadas en el catálogo.";
+        vacio.appendChild(mensaje);
+      } else {
+        mensaje.textContent = "No hay piezas disponibles con estos filtros por ahora.";
+
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "boton-volver";
+        boton.textContent = "Ver todas las joyas";
+        boton.addEventListener("click", function () {
+          checkbox.checked = false;
+          limpiarFiltros();
+        });
+
+        vacio.appendChild(mensaje);
+        vacio.appendChild(boton);
+      }
+
+      contenedor.appendChild(vacio);
     }
 
     function actualizarBotonVolver() {
@@ -733,8 +940,9 @@
 
       tipos.forEach(function (tipo) {
         const boton = document.createElement("button");
+        boton.type = "button";
         boton.className = "boton-categoria";
-        boton.textContent = etiquetasTipo[tipo];
+        boton.textContent = etiquetasTipo[tipo] || capitalizar(tipo);
 
         if (tipo === tipoSeleccionado) {
           boton.classList.add("activo");
@@ -743,7 +951,16 @@
         boton.addEventListener("click", function () {
           tipoSeleccionado = tipo;
           materialSeleccionado = null;
-          contenedorMateriales.style.display = "flex";
+
+          // Solo los materiales que existen para este tipo (así no hay combinaciones vacías)
+          const joyasDelTipo = joyas.filter(function (joya) {
+            return joya.tipo === tipo;
+          });
+          materiales = obtenerValoresUnicos(joyasDelTipo, "material");
+
+          // Con un solo material no hay nada que elegir: la fila se esconde
+          grupoMaterial.hidden = materiales.length < 2;
+
           renderBotonesTipo();
           renderBotonesMaterial();
           actualizarBotonVolver();
@@ -759,7 +976,8 @@
 
       materiales.forEach(function (material) {
         const boton = document.createElement("button");
-        boton.className = "boton-categoria";
+        boton.type = "button";
+        boton.className = "boton-categoria secundario";
         boton.textContent = capitalizar(material);
 
         if (material === materialSeleccionado) {
@@ -777,15 +995,18 @@
       });
     }
 
-    botonVolver.addEventListener("click", function () {
+    function limpiarFiltros() {
       tipoSeleccionado = null;
       materialSeleccionado = null;
-      contenedorMateriales.style.display = "none";
+      materiales = [];
+      grupoMaterial.hidden = true;
       renderBotonesTipo();
       renderBotonesMaterial();
       actualizarBotonVolver();
       actualizarCatalogo();
-    });
+    }
+
+    botonVolver.addEventListener("click", limpiarFiltros);
 
     checkbox.addEventListener("change", actualizarCatalogo);
 
@@ -801,7 +1022,6 @@
       .then(function (textoCSV) {
         joyas = csvAJoyas(textoCSV);
         tipos = obtenerValoresUnicos(joyas, "tipo");
-        materiales = obtenerValoresUnicos(joyas, "material");
 
         renderBotonesTipo();
         renderBotonesMaterial();
