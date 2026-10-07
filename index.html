@@ -515,10 +515,13 @@
       position: relative;
       background-color: var(--papel);
       border-radius: 8px;
-      padding: 52px 20px 24px;
+      padding: 56px 20px 24px;
       width: 420px;
       max-width: 100%;
       max-height: 90vh;
+      /* dvh = alto que se ve de verdad (sin las barras del navegador).
+         Si el navegador no entiende dvh, ignora esta línea y se queda con la de arriba. */
+      max-height: 90dvh;
       overflow-y: auto;
       overscroll-behavior: contain;
       text-align: center;
@@ -534,9 +537,17 @@
       transition-duration: 240ms;
     }
 
+    /* Al abrir, el foco va al contenedor (no a la ×). Así, abriendo con el dedo,
+       Safari no dibuja ningún anillo. El contenedor no es un control: no necesita uno. */
+    .modal-contenido:focus {
+      outline: none;
+    }
+
     .modal-contenido img {
       max-width: 100%;
-      max-height: 60vh;
+      /* Hasta la mitad de la pantalla: así el nombre y el botón entran sin scroll en celulares chicos */
+      max-height: 50vh;
+      max-height: 50dvh;
       object-fit: contain;
       border-radius: 4px;
       margin: 0 auto 20px auto;
@@ -584,8 +595,8 @@
 
     .cerrar {
       position: absolute;
-      top: 4px;
-      right: 4px;
+      top: 8px;
+      right: 8px;
       width: 44px;
       height: 44px;
       display: flex;
@@ -594,8 +605,14 @@
       padding: 0;
       background: none;
       border: none;
+      border-radius: 4px;
       color: var(--gris-ciruela);
       cursor: pointer;
+    }
+
+    /* El anillo de foco se dibuja hacia adentro de la ×, así no se sale de la esquina del modal */
+    .cerrar:focus-visible {
+      outline-offset: -2px;
     }
 
     .boton-whatsapp {
@@ -718,7 +735,7 @@
       }
 
       .modal-contenido {
-        padding: 52px 28px 28px;
+        padding: 56px 28px 28px;
       }
 
       /* Pie en dos columnas: cuidado | contacto */
@@ -831,7 +848,7 @@
   </footer>
 
   <div class="modal" id="modal">
-    <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="modalNombre">
+    <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="modalNombre" tabindex="-1">
       <button class="cerrar" id="cerrarModal" type="button" aria-label="Cerrar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18"/>
@@ -935,6 +952,7 @@
     const modalNombre = document.getElementById("modalNombre");
     const modalEstado = document.getElementById("modalEstado");
     const modalMaterial = document.getElementById("modalMaterial");
+    const contenidoModal = document.querySelector(".modal-contenido");
     const botonCerrar = document.getElementById("cerrarModal");
     const enlaceWhatsapp = document.getElementById("enlaceWhatsapp");
     const textoWhatsapp = document.getElementById("textoWhatsapp");
@@ -991,7 +1009,9 @@
       modal.classList.add("activo");
       document.body.style.overflow = "hidden";
       marcarFondoInerte(true);
-      botonCerrar.focus();
+      // El foco va al contenedor (tabindex="-1"): el lector de pantalla anuncia el
+      // diálogo, no aparece un anillo al abrir con el dedo, y el primer Tab lleva a la ×
+      contenidoModal.focus();
 
       // Se agrega una "página" al historial, así el botón Atrás del celular cierra el modal
       history.pushState({ modalAbierto: true }, "");
@@ -1055,9 +1075,11 @@
         cerrarModal();
       }
 
-      // Con Tab, el foco da vueltas entre la × y el botón de WhatsApp (no se escapa del modal)
+      // Con Tab, el foco da vueltas entre la × y el botón de WhatsApp (no se escapa del modal).
+      // Desde el contenedor, Tab ya va solo a la ×; Shift+Tab hay que mandarlo a WhatsApp.
       if (event.key === "Tab" && modal.classList.contains("activo")) {
-        if (event.shiftKey && document.activeElement === botonCerrar) {
+        const enElInicio = document.activeElement === botonCerrar || document.activeElement === contenidoModal;
+        if (event.shiftKey && enElInicio) {
           event.preventDefault();
           enlaceWhatsapp.focus();
         } else if (!event.shiftKey && document.activeElement === enlaceWhatsapp) {

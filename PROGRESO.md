@@ -450,3 +450,26 @@ Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
 ---
 
 **Dónde quedamos:** revisión final aplicada y probada en Chromium (celular y compu), sin commit todavía. Próximo: commit y **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
+
+## 07/10/2026 — Ajustes del modal vistos en un iPhone
+
+### Cambios de hoy
+- **Foco inicial:** al abrir el modal, el foco va al contenedor (`tabindex="-1"`, sin outline) y no a la ×. Así, al abrir con el dedo, Safari ya no dibuja el anillo de foco.
+- **Trampa de foco:** con teclado sigue igual. Tab desde el contenedor va a la ×, y después a WhatsApp. Se agregó un caso: Shift+Tab desde el contenedor va a WhatsApp, porque si no se escapaba del modal.
+- **La ×:**
+  - Ahora está a 8px del borde (antes 4px).
+  - Su anillo de foco se dibuja hacia adentro (`outline-offset: -2px`), así no se sale de la esquina.
+  - El modal tiene 4px más de espacio arriba (56px).
+- **Foto del modal:** como máximo `50vh` (antes `60vh`). En un celular de 375×667 se ven la foto, el nombre y el botón sin scroll, incluso con una foto vertical y un nombre de dos renglones.
+- **dvh con fallback:** la foto (`50dvh`) y el modal (`90dvh`) usan el alto que se ve de verdad en el celular. Arriba de cada una quedó la línea con `vh`, para navegadores viejos.
+- **Pruebas:** en Chromium a 375×667 y 1280×800 pasaron 32 de 32.
+
+### Conceptos que aprendí
+- **`tabindex="-1"`:** permite enfocar un elemento desde JavaScript (`.focus()`), pero el Tab no se detiene en él. Sirve para "pararse" en el contenedor de un diálogo. El lector de pantalla anuncia el diálogo y el próximo Tab va al primer botón de adentro.
+- **`outline-offset` negativo:** con un valor positivo, el anillo se dibuja afuera del elemento. Con uno negativo, se dibuja adentro. Sirve cuando el elemento está pegado a un borde y el anillo "se saldría".
+- **`vh`:** 1vh es el 1% del alto de la pantalla. `50vh` es la mitad, sea cual sea el celular.
+- **`dvh` y fallback en CSS:** en Safari de iPhone, `vh` mide la pantalla como si las barras del navegador estuvieran ocultas. `dvh` mide solo lo que se ve. Si se escribe `max-height: 50vh;` y debajo `max-height: 50dvh;`, el navegador usa la última línea que entiende. Uno viejo ignora la de `dvh` y se queda con `vh`.
+
+---
+
+**Dónde quedamos:** ajustes del modal (foco y altura de la foto) hechos, probados y subidos a `main`. Próximo: **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
