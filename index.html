@@ -4,7 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Color de la barra del navegador en el celular (el ciruela de la marca) -->
+  <meta name="theme-color" content="#24131d">
   <title>Joyería Kalo · Piezas elegidas una por una</title>
+  <link rel="canonical" href="https://r3ss4k00-cmd.github.io/catalogo-joyas/">
   <meta name="description" content="Anillos, cadenas, aritos, pulseras y dijes de plata, oro y perlas, elegidos uno por uno. Consultá por WhatsApp.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Joyería Kalo">
@@ -15,6 +18,10 @@
   <!-- Favicon: una "K" champagne sobre ciruela, dibujada con trazos (así se ve igual en todos los equipos).
        Va dentro del HTML como "data URI": no hace falta un archivo aparte. Los # se escriben %23. -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2324131d'/%3E%3Cpath d='M11 7v18M21.5 7 11.5 17.5M14.5 14.5 22 25' fill='none' stroke='%23d8bf8a' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E">
+  <!-- Preconnect: abre la conexión con estos servidores antes de necesitarlos.
+       "crossorigin" va solo donde el pedido es CORS (fuentes y el fetch de la planilla), no en las fotos. -->
+  <link rel="preconnect" href="https://docs.google.com" crossorigin>
+  <link rel="preconnect" href="https://i.ibb.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
@@ -45,6 +52,8 @@
     /* Reserva el lugar de la barra de scroll: al abrir el modal la página no "salta" */
     html {
       scrollbar-gutter: stable;
+      /* Al moverse con Tab, lo enfocado no queda tapado por la barra de arriba (sticky) */
+      scroll-padding-top: 56px;
     }
 
     body {
@@ -337,9 +346,10 @@
       cursor: pointer;
     }
 
+    /* minmax(0, 1fr): la columna nunca se ensancha aunque un nombre sea muy largo */
     .catalogo {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       max-width: 1040px;
       margin: 0 auto;
@@ -420,6 +430,8 @@
       line-height: 1.25;
       color: var(--tinta);
       margin: 0 0 4px 0;
+      /* Una palabra larguísima se corta en vez de salirse de la tarjeta */
+      overflow-wrap: anywhere;
     }
 
     /* Por ahora no se publican precios: siempre el mismo texto en el mismo lugar */
@@ -488,6 +500,8 @@
       z-index: 100;
       padding: 16px;
       overflow-y: auto;
+      /* El scroll dentro del modal no "se pasa" a la página de atrás */
+      overscroll-behavior: contain;
     }
 
     .modal.activo {
@@ -506,6 +520,7 @@
       max-width: 100%;
       max-height: 90vh;
       overflow-y: auto;
+      overscroll-behavior: contain;
       text-align: center;
       transform: scale(0.97) translateY(6px);
       opacity: 0;
@@ -526,6 +541,14 @@
       border-radius: 4px;
       margin: 0 auto 20px auto;
       display: block;
+      /* Igual que en las tarjetas: invisible hasta que baja la foto nueva,
+         así nunca se ve un instante la foto de la joya anterior */
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .modal-contenido img.cargada {
+      opacity: 1;
     }
 
     .modal-nombre {
@@ -575,10 +598,6 @@
       cursor: pointer;
     }
 
-    .cerrar:hover {
-      color: var(--tinta);
-    }
-
     .boton-whatsapp {
       display: inline-flex;
       align-items: center;
@@ -600,18 +619,25 @@
       transform: scale(0.97);
     }
 
-    .boton-whatsapp:hover {
-      background-color: var(--ciruela-hover);
-    }
-
     /* Variante para fondo oscuro (el pie): champagne con texto ciruela (9.9:1) */
     .boton-whatsapp.claro {
       background-color: var(--champagne);
       color: var(--ciruela);
     }
 
-    .boton-whatsapp.claro:hover {
-      background-color: var(--marfil);
+    /* Hover solo con mouse, como en tarjetas y filtros */
+    @media (hover: hover) and (pointer: fine) {
+      .cerrar:hover {
+        color: var(--tinta);
+      }
+
+      .boton-whatsapp:hover {
+        background-color: var(--ciruela-hover);
+      }
+
+      .boton-whatsapp.claro:hover {
+        background-color: var(--marfil);
+      }
     }
 
     /* ---------- Pie de página (oscuro, como la portada) ---------- */
@@ -679,7 +705,7 @@
       }
 
       .catalogo {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 20px;
       }
 
@@ -708,7 +734,7 @@
 
     @media (min-width: 960px) {
       .catalogo {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 24px;
       }
     }
@@ -735,11 +761,11 @@
 </head>
 <body>
 
-  <div class="barra-superior">
+  <nav class="barra-superior" aria-label="Principal">
     <div class="barra-interior">
       <a class="marca" href="#">Kalo</a>
     </div>
-  </div>
+  </nav>
 
   <header class="portada">
     <div class="portada-interior">
@@ -748,7 +774,8 @@
     </div>
   </header>
 
-  <div class="contenido">
+  <!-- <main> marca la parte principal de la página (los lectores de pantalla saltan directo acá) -->
+  <main class="contenido">
     <div class="categorias">
       <!-- Va primero: así no se mueve cuando aparece o desaparece la fila de Material -->
       <div class="grupo-filtro">
@@ -768,11 +795,14 @@
         <p class="rotulo-filtro" id="rotuloMaterial">Material</p>
         <div class="fila-categorias" id="botonesMaterial" role="group" aria-labelledby="rotuloMaterial"></div>
       </div>
-      <button class="boton-volver" id="botonVolver" style="display: none;">Ver todas las categorías</button>
+      <button class="boton-volver" id="botonVolver" type="button" hidden>Ver todas las categorías</button>
     </div>
 
+    <h2 class="solo-lectores">Joyas</h2>
+    <!-- Aviso invisible: cada vez que cambia su texto, el lector de pantalla lo lee ("3 joyas") -->
+    <p class="solo-lectores" id="avisoCatalogo" aria-live="polite"></p>
     <div class="catalogo" id="catalogo"></div>
-  </div>
+  </main>
 
   <footer class="pie">
     <div class="pie-interior">
@@ -786,14 +816,14 @@
         <p>Escribime y te ayudo a elegir.</p>
         <p>Coordino la entrega en mano por WhatsApp.</p>
         <!-- TODO: medios de pago (efectivo, transferencia...) cuando estén confirmados -->
-        <a href="#" target="_blank" rel="noopener" class="boton-whatsapp claro" id="enlaceWhatsappPie">
+        <a href="#" target="_blank" rel="noopener noreferrer" class="boton-whatsapp claro" id="enlaceWhatsappPie">
           <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
             <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
           </svg>
           <span>Escribime por WhatsApp</span>
         </a>
         <!-- Se muestra solo cuando INSTAGRAM_USUARIO tiene un valor (ver el script) -->
-        <a href="#" target="_blank" rel="noopener" class="enlace-instagram" id="enlaceInstagram" hidden>Instagram</a>
+        <a href="#" target="_blank" rel="noopener noreferrer" class="enlace-instagram" id="enlaceInstagram" hidden>Instagram</a>
       </section>
     </div>
 
@@ -814,7 +844,7 @@
         <span class="modal-material" id="modalMaterial"></span>
       </p>
       <p class="precio modal-precio">Consultar precio</p>
-      <a href="#" target="_blank" rel="noopener" class="boton-whatsapp" id="enlaceWhatsapp">
+      <a href="#" target="_blank" rel="noopener noreferrer" class="boton-whatsapp" id="enlaceWhatsapp">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
           <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.588-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.336-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
         </svg>
@@ -824,7 +854,7 @@
   </div>
 
   <script>
-    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAC_qdJr0VEEpHaUNwoEZ6uTwQN4eVL9ybpvr05M0qbkXiW--lqFXc2Kv2fut0ZfEiG9zab2y82Zt-/pub?output=csv";
+    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAC_qdJr0VEEpHaUNwoEZ6uTwQN4eVL9ybpvr05M0qbkXiW--lqFXc2Kv2fut0ZfEiG9zab2y82Zt-/pub?gid=0&single=true&output=csv";
 
     // TODO: reemplazar por el número real de WhatsApp (formato 549 + característica + número, sin + ni espacios)
     const WHATSAPP_NUMERO = "5490000000000";
@@ -873,6 +903,12 @@
         limpia = "https://" + limpia.slice("http://".length);
       }
 
+      // Si no es un link https (por ejemplo, un "5" en la planilla), ni se intenta
+      // descargar: se muestra directo "Sin imagen"
+      if (!limpia.startsWith("https://")) {
+        return IMAGEN_SIN_FOTO;
+      }
+
       return limpia;
     }
 
@@ -889,6 +925,7 @@
     const contenedorMateriales = document.getElementById("botonesMaterial");
     const grupoMaterial = document.getElementById("grupoMaterial");
     const botonVolver = document.getElementById("botonVolver");
+    const avisoCatalogo = document.getElementById("avisoCatalogo");
 
     let tipoSeleccionado = null;
     let materialSeleccionado = null;
@@ -905,11 +942,28 @@
     // La tarjeta que abrió el modal, para devolverle el foco al cerrar
     let tarjetaQueAbrio = null;
 
+    // Todo lo que queda "atrás" del modal. Mientras el modal está abierto se marca
+    // como inert: no se puede tocar, enfocar ni leer con lector de pantalla.
+    const fondoPagina = document.querySelectorAll(".barra-superior, .portada, .contenido, .pie");
+
+    function marcarFondoInerte(inerte) {
+      fondoPagina.forEach(function (elemento) {
+        elemento.inert = inerte;
+      });
+    }
+
+    // La foto del modal aparece recién cuando terminó de bajar (o cuando se puso "Sin imagen")
+    modalImagen.onload = function () {
+      modalImagen.classList.add("cargada");
+    };
     modalImagen.onerror = function () {
       manejarErrorImagen(modalImagen);
+      modalImagen.classList.add("cargada");
     };
 
     function abrirModal(joya, tarjeta) {
+      // Se esconde la foto anterior antes de pedir la nueva
+      modalImagen.classList.remove("cargada");
       modalImagen.src = normalizarUrlImagen(joya.imagen);
       modalImagen.alt = joya.nombre;
       modalNombre.textContent = joya.nombre;
@@ -936,6 +990,7 @@
       tarjetaQueAbrio = tarjeta;
       modal.classList.add("activo");
       document.body.style.overflow = "hidden";
+      marcarFondoInerte(true);
       botonCerrar.focus();
 
       // Se agrega una "página" al historial, así el botón Atrás del celular cierra el modal
@@ -948,6 +1003,8 @@
 
       modal.classList.remove("activo");
       document.body.style.overflow = "";
+      // Se libera el fondo ya mismo: si no, la tarjeta no podría recibir el foco
+      marcarFondoInerte(false);
 
       // El foco vuelve a la tarjeta cuando termina la animación de cierre.
       // "transitionend" avisa cuando termina el fundido; el setTimeout es una
@@ -1013,7 +1070,7 @@
     function renderJoyas(lista) {
       contenedor.innerHTML = "";
 
-      lista.forEach(function (joya) {
+      lista.forEach(function (joya, indice) {
         const tarjeta = document.createElement("button");
         tarjeta.type = "button";
         tarjeta.className = "tarjeta";
@@ -1030,8 +1087,9 @@
           imagen.classList.add("cargada");
         };
 
-        // loading va antes que src, para que el navegador sepa que puede esperar
-        imagen.loading = "lazy";
+        // loading va antes que src, para que el navegador sepa que puede esperar.
+        // Las primeras 4 se ven apenas abre la página: esas se bajan ya ("eager").
+        imagen.loading = indice < 4 ? "eager" : "lazy";
         imagen.alt = joya.nombre;
         imagen.src = normalizarUrlImagen(joya.imagen);
 
@@ -1084,37 +1142,60 @@
       return texto.charAt(0).toUpperCase() + texto.slice(1);
     }
 
-    function dividirLineaCSV(linea) {
-      const valores = [];
+    // Convierte el texto del CSV en filas (cada fila es un array de valores).
+    // Recorre TODO el texto caracter por caracter, sin cortarlo antes en líneas:
+    // así un Enter dentro de una celda (que Google Sheets pone entre comillas)
+    // no parte la fila en dos.
+    function csvAFilas(texto) {
+      const filas = [];
+      let fila = [];
       let actual = "";
       let dentroDeComillas = false;
 
-      for (let i = 0; i < linea.length; i++) {
-        const caracter = linea[i];
+      for (let i = 0; i < texto.length; i++) {
+        const caracter = texto[i];
 
-        if (caracter === '"') {
-          dentroDeComillas = !dentroDeComillas;
-        } else if (caracter === "," && !dentroDeComillas) {
-          valores.push(actual.trim());
+        if (dentroDeComillas) {
+          if (caracter === '"' && texto[i + 1] === '"') {
+            // "" dentro de comillas es una comilla de verdad (ej: Anillo ""Luna"")
+            actual += '"';
+            i++;
+          } else if (caracter === '"') {
+            dentroDeComillas = false;
+          } else {
+            // Dentro de comillas todo es texto, incluso comas y Enters
+            actual += caracter;
+          }
+        } else if (caracter === '"') {
+          dentroDeComillas = true;
+        } else if (caracter === ",") {
+          fila.push(actual.trim());
           actual = "";
-        } else {
+        } else if (caracter === "\n") {
+          fila.push(actual.trim());
+          filas.push(fila);
+          fila = [];
+          actual = "";
+        } else if (caracter !== "\r") {
+          // El \r es la otra mitad del Enter de Windows (\r\n): se ignora
           actual += caracter;
         }
       }
 
-      valores.push(actual.trim());
-      return valores;
+      // La última fila (el texto no siempre termina con Enter)
+      fila.push(actual.trim());
+      filas.push(fila);
+
+      return filas;
     }
 
     function csvAJoyas(textoCSV) {
-      const lineas = textoCSV.trim().split(/\r?\n/);
-      const encabezados = dividirLineaCSV(lineas[0]);
+      const filas = csvAFilas(textoCSV);
+      const encabezados = filas[0];
       const resultado = [];
 
-      for (let i = 1; i < lineas.length; i++) {
-        if (!lineas[i].trim()) continue;
-
-        const valores = dividirLineaCSV(lineas[i]);
+      for (let i = 1; i < filas.length; i++) {
+        const valores = filas[i];
         const joya = {};
 
         encabezados.forEach(function (encabezado, indice) {
@@ -1158,6 +1239,9 @@
       // Estado vacío: si los filtros no dejan ninguna joya, se explica y se ofrece volver
       if (lista.length === 0) {
         mostrarVacio();
+      } else {
+        // El lector de pantalla anuncia cuántas joyas quedaron
+        avisoCatalogo.textContent = lista.length === 1 ? "1 joya" : lista.length + " joyas";
       }
     }
 
@@ -1187,16 +1271,26 @@
       }
 
       contenedor.appendChild(vacio);
+      avisoCatalogo.textContent = mensaje.textContent;
     }
 
     function actualizarBotonVolver() {
-      if (tipoSeleccionado || materialSeleccionado) {
-        botonVolver.style.display = "inline-block";
-      } else {
-        botonVolver.style.display = "none";
-      }
+      botonVolver.hidden = !(tipoSeleccionado || materialSeleccionado);
     }
 
+    // Marca cuál botón está elegido SIN volver a crear los botones.
+    // (Si se crearan de nuevo, el botón que tenía el foco desaparecería
+    // y quien usa teclado perdería su lugar en la página.)
+    function marcarActivo(contenedorBotones, valorSeleccionado) {
+      contenedorBotones.querySelectorAll("button").forEach(function (boton) {
+        const elegido = boton.dataset.valor === valorSeleccionado;
+        boton.classList.toggle("activo", elegido);
+        // aria-pressed le dice al lector de pantalla si el botón está "apretado"
+        boton.setAttribute("aria-pressed", elegido ? "true" : "false");
+      });
+    }
+
+    // Se llama una sola vez, cuando llegan los datos
     function renderBotonesTipo() {
       contenedorTipos.innerHTML = "";
 
@@ -1205,10 +1299,8 @@
         boton.type = "button";
         boton.className = "boton-categoria";
         boton.textContent = etiquetasTipo[tipo] || capitalizar(tipo);
-
-        if (tipo === tipoSeleccionado) {
-          boton.classList.add("activo");
-        }
+        // El valor real (en singular, ej. "anillo") queda guardado en el botón
+        boton.dataset.valor = tipo;
 
         boton.addEventListener("click", function () {
           tipoSeleccionado = tipo;
@@ -1223,7 +1315,9 @@
           // Con un solo material no hay nada que elegir: la fila se esconde
           grupoMaterial.hidden = materiales.length < 2;
 
-          renderBotonesTipo();
+          marcarActivo(contenedorTipos, tipoSeleccionado);
+          // La fila de material sí se arma de nuevo (cambian los materiales);
+          // el foco está en el botón de tipo, así que no se pierde
           renderBotonesMaterial();
           actualizarBotonVolver();
           actualizarCatalogo();
@@ -1231,8 +1325,11 @@
 
         contenedorTipos.appendChild(boton);
       });
+
+      marcarActivo(contenedorTipos, tipoSeleccionado);
     }
 
+    // Se arma de nuevo solo cuando cambia el tipo elegido
     function renderBotonesMaterial() {
       contenedorMateriales.innerHTML = "";
 
@@ -1241,38 +1338,44 @@
         boton.type = "button";
         boton.className = "boton-categoria secundario";
         boton.textContent = capitalizar(material);
-
-        if (material === materialSeleccionado) {
-          boton.classList.add("activo");
-        }
+        boton.dataset.valor = material;
 
         boton.addEventListener("click", function () {
           materialSeleccionado = material;
-          renderBotonesMaterial();
+          marcarActivo(contenedorMateriales, materialSeleccionado);
           actualizarBotonVolver();
           actualizarCatalogo();
         });
 
         contenedorMateriales.appendChild(boton);
       });
+
+      marcarActivo(contenedorMateriales, materialSeleccionado);
     }
 
+    // La usan los dos botones "Ver todas…"
     function limpiarFiltros() {
       tipoSeleccionado = null;
       materialSeleccionado = null;
       materiales = [];
       grupoMaterial.hidden = true;
-      renderBotonesTipo();
+      marcarActivo(contenedorTipos, null);
       renderBotonesMaterial();
       actualizarBotonVolver();
       actualizarCatalogo();
+
+      // El botón que se tocó se ocultó o se borró: el foco pasa al primer filtro de tipo
+      const primerTipo = contenedorTipos.querySelector("button");
+      if (primerTipo) {
+        primerTipo.focus();
+      }
     }
 
     botonVolver.addEventListener("click", limpiarFiltros);
 
     checkbox.addEventListener("change", actualizarCatalogo);
 
-    contenedor.innerHTML = "<p>Cargando joyas...</p>";
+    contenedor.innerHTML = "<p>Cargando joyas…</p>";
 
     fetch(URL_CSV)
       .then(function (respuesta) {
@@ -1292,6 +1395,7 @@
       .catch(function (error) {
         console.error("Error al cargar las joyas:", error);
         contenedor.innerHTML = "<p>No se pudieron cargar las joyas. Probá recargar la página.</p>";
+        avisoCatalogo.textContent = "No se pudieron cargar las joyas. Probá recargar la página.";
       });
   </script>
 
