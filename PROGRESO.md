@@ -338,3 +338,34 @@ Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
 ---
 
 **Dónde quedamos:** filtros y modal mejorados (crítica de diseño hecha). Próximo: **contenido** (fotos reales + número de WhatsApp) y después marca y confianza (logo, frase, pie de página).
+
+## 06/10/2026 — Animaciones y microinteracciones
+
+### Cambios de hoy
+- **Curva de movimiento única** `--ease-out: cubic-bezier(0.23, 1, 0.32, 1)` en `:root`, usada en todas las animaciones de movimiento.
+- **El modal ahora sí se anima:** abre en 240ms y cierra en 160ms (cerrar es más rápido que abrir), con un fundido del fondo y un leve `scale(0.97)` del contenido.
+- **El foco vuelve a la tarjeta cuando termina la animación de cierre**, también al reabrir rápido o al usar Atrás.
+- **Respuesta al presionar:** las tarjetas (`scale(0.985)`), los filtros y el botón de WhatsApp (`scale(0.97)`) se achican apenas al tocarlos.
+- **Hover solo con mouse** (`@media (hover: hover) and (pointer: fine)`) en tarjetas y filtros.
+- **Fotos con fundido:** arrancan invisibles y JS les pone `.cargada` al terminar de bajar (o al fallar, para que se vea el "Sin imagen").
+- **La fila de material y el estado vacío** aparecen con un fundido corto (`@starting-style`).
+- **`scrollbar-gutter: stable`:** en la compu la página ya no "salta" al abrir el modal.
+- **Interruptor:** la bolita se mueve con la curva nueva y además cambia de color con transición.
+- **`loading = "lazy"` va antes que `src`:** antes el navegador podía empezar a bajar la foto antes de enterarse de que podía esperar.
+- Se probó con Chromium: la trampa de foco sigue andando, y con el modal cerrado el Tab nunca entra al modal.
+
+### Conceptos que aprendí
+- **`display: none` no se anima:** si un elemento estaba en `display: none`, el navegador no tiene un "antes" desde donde animar. Por eso la transición vieja del modal nunca se veía.
+- **`visibility` con retraso:**
+  - `transition: visibility 0s linear 160ms` espera a que termine el fundido y recién ahí oculta.
+  - `visibility: hidden` también saca los botones del recorrido con Tab.
+- **Curvas de easing (aceleración):**
+  - `ease-out` arranca rápido y frena suave: se siente con respuesta inmediata.
+  - `ease-in` arranca lento y se siente pesado; no se usa en interfaces.
+- **`transitionend`:** un evento que avisa cuando terminó una transición. Se suma un `setTimeout` de respaldo por si el aviso no llega.
+- **`@starting-style`:** le dice al navegador "desde dónde arranca" un elemento que recién aparece, para animar su entrada sin JavaScript.
+- **Movimiento reducido ≠ cero animación:** a quien pidió menos movimiento se le sacan los zooms y desplazamientos (que marean), pero se le dejan los fundidos de opacidad y color.
+
+---
+
+**Dónde quedamos:** filtros, modal y animaciones listos (sin commit todavía). Próximo: **contenido** (fotos reales + número de WhatsApp) y después marca y confianza (logo, frase, pie de página).

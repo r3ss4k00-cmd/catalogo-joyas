@@ -31,9 +31,17 @@
 
       --serif: 'Bodoni Moda', Georgia, serif;
       --sans: 'Jost', system-ui, sans-serif;
+
+      /* Curva de movimiento de toda la página: arranca rápido y termina suave */
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     /* ---------- Base (pensada primero para el celular) ---------- */
+
+    /* Reserva el lugar de la barra de scroll: al abrir el modal la página no "salta" */
+    html {
+      scrollbar-gutter: stable;
+    }
 
     body {
       font-family: var(--sans);
@@ -105,7 +113,7 @@
       inset: 0;
       background-color: #8c7a82;
       border-radius: 24px;
-      transition: background-color 0.2s ease;
+      transition: background-color 200ms ease;
     }
 
     .slider::before {
@@ -117,7 +125,8 @@
       bottom: 3px;
       background-color: var(--marfil);
       border-radius: 50%;
-      transition: transform 0.2s ease;
+      /* La bolita se mueve (curva de movimiento) y cambia de color (ease) */
+      transition: transform 200ms var(--ease-out), background-color 200ms ease;
     }
 
     .switch input:checked + .slider {
@@ -214,11 +223,12 @@
       background-color: transparent;
       color: var(--tinta);
       cursor: pointer;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 120ms var(--ease-out);
     }
 
-    .boton-categoria:hover {
-      background-color: var(--papel);
+    /* Al presionar, el botón se achica apenas: "te escuché" */
+    .boton-categoria:active {
+      transform: scale(0.97);
     }
 
     /* Fila de material: más liviana que la de tipo, para que se lea como "segundo nivel" */
@@ -229,14 +239,41 @@
       background-color: var(--papel);
     }
 
-    .boton-categoria.secundario:hover {
-      border-color: var(--oro-texto);
-    }
 
     .boton-categoria.activo {
       background-color: var(--ciruela);
       border-color: var(--ciruela);
       color: var(--champagne);
+    }
+
+    /* Hover solo con mouse: en el celular quedaría "pegado" después de tocar */
+    @media (hover: hover) and (pointer: fine) {
+      .boton-categoria:hover {
+        background-color: var(--papel);
+      }
+
+      .boton-categoria.secundario:hover {
+        border-color: var(--oro-texto);
+      }
+
+      .boton-categoria.activo:hover {
+        background-color: var(--ciruela);
+      }
+    }
+
+    /* La fila de material y el estado vacío aparecen con un fundido corto
+       (@starting-style = "desde dónde arranca" cuando el elemento aparece) */
+    .grupo-filtro,
+    .vacio {
+      transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+    }
+
+    @starting-style {
+      .grupo-filtro,
+      .vacio {
+        opacity: 0;
+        transform: translateY(4px);
+      }
     }
 
     .boton-volver {
@@ -300,7 +337,11 @@
       border-radius: 6px;
       overflow: hidden;
       cursor: pointer;
-      transition: border-color 0.25s ease;
+      transition: border-color 250ms ease, transform 160ms var(--ease-out);
+    }
+
+    .tarjeta:active {
+      transform: scale(0.985);
     }
 
     .tarjeta img {
@@ -309,7 +350,13 @@
       height: auto;
       object-fit: cover;
       display: block;
-      transition: transform 0.6s ease;
+      /* Arranca invisible; JavaScript le pone .cargada cuando la foto terminó de bajar */
+      opacity: 0;
+      transition: opacity 300ms ease, transform 500ms var(--ease-out);
+    }
+
+    .tarjeta img.cargada {
+      opacity: 1;
     }
 
     .info {
@@ -364,7 +411,7 @@
     }
 
     /* Efecto hover solo en dispositivos con mouse (en el celular queda "pegado") */
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       .tarjeta:hover {
         border-color: var(--oro-texto);
       }
@@ -376,8 +423,15 @@
 
     /* ---------- Modal ---------- */
 
+    /* El modal siempre está en la página (display: flex) pero invisible.
+       Al cerrar: se desvanece en 160ms y recién después se oculta (visibility).
+       Al abrir: aparece al instante y se desvanece hacia visible en 240ms. */
     .modal {
-      display: none;
+      display: flex;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms var(--ease-out), visibility 0s linear 160ms;
       position: fixed;
       inset: 0;
       background-color: rgba(36, 19, 29, 0.82);
@@ -389,7 +443,10 @@
     }
 
     .modal.activo {
-      display: flex;
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 240ms var(--ease-out), visibility 0s;
     }
 
     .modal-contenido {
@@ -402,14 +459,16 @@
       max-height: 90vh;
       overflow-y: auto;
       text-align: center;
-      transform: scale(0.96);
+      transform: scale(0.97) translateY(6px);
       opacity: 0;
-      transition: transform 0.25s ease, opacity 0.25s ease;
+      /* Cerrar (160ms) es más rápido que abrir (240ms) */
+      transition: transform 160ms var(--ease-out), opacity 160ms var(--ease-out);
     }
 
     .modal.activo .modal-contenido {
       transform: scale(1);
       opacity: 1;
+      transition-duration: 240ms;
     }
 
     .modal-contenido img {
@@ -486,7 +545,11 @@
       font-weight: 500;
       border-radius: 4px;
       text-decoration: none;
-      transition: background-color 0.2s ease;
+      transition: background-color 200ms ease, transform 120ms var(--ease-out);
+    }
+
+    .boton-whatsapp:active {
+      transform: scale(0.97);
     }
 
     .boton-whatsapp:hover {
@@ -529,14 +592,22 @@
       }
     }
 
-    /* Si la persona pidió menos movimiento, se apagan las animaciones */
+    /* Si la persona pidió menos movimiento: nada se mueve ni hace zoom,
+       pero se mantienen los fundidos de opacidad y color (esos no marean) */
     @media (prefers-reduced-motion: reduce) {
-      * {
-        transition: none !important;
+      .tarjeta:hover img,
+      .tarjeta:active,
+      .boton-categoria:active,
+      .boton-whatsapp:active,
+      .modal-contenido,
+      .modal.activo .modal-contenido,
+      .grupo-filtro,
+      .vacio {
+        transform: none;
       }
 
-      .tarjeta:hover img {
-        transform: none;
+      .slider::before {
+        transition: background-color 200ms ease;
       }
     }
   </style>
@@ -713,9 +784,26 @@
       modal.classList.remove("activo");
       document.body.style.overflow = "";
 
-      if (tarjetaQueAbrio) {
-        tarjetaQueAbrio.focus();
+      // El foco vuelve a la tarjeta cuando termina la animación de cierre.
+      // "transitionend" avisa cuando termina el fundido; el setTimeout es una
+      // red de seguridad por si ese aviso no llega.
+      const tarjeta = tarjetaQueAbrio;
+
+      function alTerminarCierre(event) {
+        // Ignorar avisos de otras transiciones (por ejemplo, la del contenido)
+        if (event && (event.target !== modal || event.propertyName !== "opacity")) return;
+
+        modal.removeEventListener("transitionend", alTerminarCierre);
+        clearTimeout(temporizadorCierre);
+
+        // Si mientras tanto se volvió a abrir el modal, no se toca el foco
+        if (!modal.classList.contains("activo") && tarjeta) {
+          tarjeta.focus();
+        }
       }
+
+      modal.addEventListener("transitionend", alTerminarCierre);
+      const temporizadorCierre = setTimeout(alTerminarCierre, 300);
     }
 
     // Cerrar con la ×, Escape o tocando afuera: volvemos atrás en el historial,
@@ -766,12 +854,21 @@
         tarjeta.className = "tarjeta";
 
         const imagen = document.createElement("img");
-        imagen.src = normalizarUrlImagen(joya.imagen);
-        imagen.alt = joya.nombre;
-        imagen.loading = "lazy";
+
+        // Cuando la foto termina de bajar, aparece con un fundido (.cargada)
+        imagen.onload = function () {
+          imagen.classList.add("cargada");
+        };
+        // Si falla, se pone "Sin imagen" y también se muestra (si no, quedaría invisible)
         imagen.onerror = function () {
           manejarErrorImagen(imagen);
+          imagen.classList.add("cargada");
         };
+
+        // loading va antes que src, para que el navegador sepa que puede esperar
+        imagen.loading = "lazy";
+        imagen.alt = joya.nombre;
+        imagen.src = normalizarUrlImagen(joya.imagen);
 
         const info = document.createElement("span");
         info.className = "info";
