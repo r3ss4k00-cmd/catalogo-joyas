@@ -399,3 +399,54 @@ Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
 ---
 
 **Dónde quedamos:** capa de marca lista (sin commit todavía). Próximo: **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
+
+## 06/10/2026 — Revisión final (diseño, calidad y seguridad)
+
+### Qué encontró la revisión
+- **Lector del CSV frágil:** cortaba el texto por líneas *antes* de mirar las comillas. Un Enter dentro de una celda (la fila 1 de la planilla ya tenía uno al final del link) podía hacer desaparecer una joya sin aviso. Además, `Anillo "Luna"` se mostraba `Anillo Luna`.
+- **Foco perdido con teclado:** al elegir un filtro, los botones se borraban y se creaban de nuevo, y el foco quedaba "en el aire" (`<body>`). Se comprobó en Chromium.
+- **Planilla:** estaba publicado el documento completo, incluida la pestaña INSTRUCCIONES. Ahora solo se publica la hoja CATALOGO JOYAS (`URL_CSV` cambió a `…pub?gid=0&single=true&output=csv`).
+- **Seguridad, lo que ya estaba bien:** ningún dato de la planilla llega a `innerHTML`, los links de WhatsApp usan `encodeURIComponent`, y un `javascript:` en una imagen no se ejecuta.
+
+### Cambios de hoy
+- **CSV:** una función nueva, `csvAFilas`, recorre todo el texto caracter por caracter. Entiende comillas, `""`, comas y Enters dentro de celdas, y finales de línea de Windows.
+- **Filtros:** los botones de tipo se crean una sola vez. Al elegir uno, `marcarActivo` solo cambia la clase `activo` y `aria-pressed`, así el foco no se mueve. "Ver todas…" pasa el foco al primer filtro.
+- **Aviso para lectores de pantalla:** un texto invisible con `aria-live` dice "2 joyas", "1 joya" o el mensaje de estado vacío cada vez que cambian los filtros.
+- **Modal:**
+  - La foto se oculta hasta que baja la nueva. Ya no se ve un instante la joya anterior.
+  - Mientras el modal está abierto, el fondo queda `inert`.
+- **Estructura:** la barra superior pasó a `<nav>`, la zona de joyas a `<main>`, y hay un `<h2>Joyas</h2>` solo para lectores de pantalla.
+- **Imágenes:** si la planilla no trae un link `https://` (por ejemplo `5`), se muestra "Sin imagen" sin pedir nada al servidor (antes daba 404). Las primeras 4 fotos cargan enseguida y el resto con `lazy`.
+- **Detalles:**
+  - `preconnect` a la planilla y a ImgBB.
+  - `theme-color` y `canonical` en el `<head>`.
+  - `noreferrer` en los links externos.
+  - Hover de × y WhatsApp solo con mouse.
+  - `overscroll-behavior` en el modal.
+  - `scroll-padding-top` para que la barra no tape lo enfocado.
+  - "Cargando joyas…" con el caracter `…`.
+  - `botonVolver` con `hidden`.
+  - Grilla con `minmax(0, 1fr)` para nombres larguísimos.
+- **Pruebas:** se probó todo en Chromium a 390px (celular) y 1280px (compu). Pasaron 44 de 44 pruebas en cada tamaño.
+
+### Conceptos que aprendí
+- **Por qué se pierde el foco:** si borrás el elemento que tiene el foco (por ejemplo con `innerHTML = ""`), el navegador no sabe dónde ponerlo y lo manda a `<body>`. Quien usa teclado o lector de pantalla pierde su lugar. La solución es no recrear: cambiar solo las clases o atributos del botón que ya existe.
+- **`aria-pressed`:** convierte un botón en un "interruptor" para el lector de pantalla ("Anillos, botón, presionado"). El color solo no alcanza, porque una persona ciega no lo ve.
+- **`aria-live="polite"`:** marca una zona cuyo texto el lector anuncia cuando cambia, sin mover el foco. "Polite" significa que espera a que termine de hablar.
+- **`inert`:** un atributo que vuelve una parte de la página "intocable". No se puede hacer clic ni enfocarla con Tab, y el lector de pantalla no la lee. Es ideal para el fondo de un modal.
+- **Leer un CSV caracter por caracter:** es una pequeña "máquina de estados" con un interruptor `dentroDeComillas`. Dentro de comillas todo es texto (incluso comas y Enters). Fuera de comillas, la coma corta el valor y el Enter corta la fila. `""` adentro de comillas significa una comilla de verdad.
+- **`dataset`:** `boton.dataset.valor = "anillo"` guarda un dato propio en el elemento (en el HTML queda como `data-valor="anillo"`). Sirve para saber qué representa cada botón sin depender del texto visible ("Anillos").
+- **`minmax(0, 1fr)`:** `1fr` solo no deja que una columna sea más angosta que su contenido más largo. Con `minmax(0, 1fr)` la columna respeta su ancho y el texto se corta (`overflow-wrap: anywhere`).
+- **`preconnect` con y sin `crossorigin`:** el navegador usa conexiones distintas para los pedidos CORS (fetch, fuentes) y para los normales (fotos). Por eso la planilla lleva `crossorigin` y ImgBB no.
+
+### Pendiente
+- Contenido: fotos reales en la planilla, número real de WhatsApp y usuario de Instagram.
+- Se dejaron afuera a propósito:
+  - CSP (una política de seguridad extra).
+  - Que `PROGRESO.md` y `CLAUDE.md` se pueden leer en GitHub Pages.
+  - Alojar las fuentes en el repo en vez de Google Fonts.
+- Hacer el commit de esta tanda.
+
+---
+
+**Dónde quedamos:** revisión final aplicada y probada en Chromium (celular y compu), sin commit todavía. Próximo: commit y **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
