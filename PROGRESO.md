@@ -246,3 +246,29 @@
 ---
 
 **Dónde quedamos:** catálogo completo y funcional (diseño boutique, Sheets, filtros, categorías, modal, botón de WhatsApp, sistema de fotos programado y andando). Solo falta verificar el sistema de fotos con un link real de ImgBB, y terminar de dejarle todo fácil a la dueña (instrucciones de fotos + cómo cargar la planilla desde su celular o PC).
+
+## 06/10/2026 — Auditoría de calidad y tanda 1 de arreglos
+
+### Cambios de hoy
+- Se hizo una auditoría (accesibilidad, rendimiento, SEO, buenas prácticas) con 29 puntos priorizados. Esta tanda arregla los más importantes.
+- El negocio ahora se llama **Joyería Kalo**: cambiaron el `<title>` ("Joyería Kalo · Catálogo") y el `<h1>`.
+- Se agregaron `meta description` y etiquetas **Open Graph** (`og:title`, `og:description`, `og:image`...).
+- El número de WhatsApp quedó en la constante `WHATSAPP_NUMERO`, arriba de todo en el script, con un `TODO` para cambiarlo por el real.
+- `renderJoyas` se reescribió: cada tarjeta es un `<button>` armado con `createElement` + `textContent`, sin `innerHTML`.
+
+### Conceptos que aprendí
+- **Open Graph:** son `<meta>` que lee WhatsApp/Instagram/Facebook para armar la "vista previa" cuando se pega un link (foto + título + descripción). No se ven en la página, solo al compartir.
+- **`textContent` vs `innerHTML`:** `innerHTML` interpreta el texto como HTML; si un nombre trae comillas o `<`, rompe la tarjeta (o deja meter código). `textContent` lo pone como texto puro, siempre. Se probó con el nombre `Anillo "Luna" <b>x</b>` y se mostró tal cual, sin romper nada.
+- **`<button>` en vez de `<div>` clickeable:** un botón recibe foco con Tab y se activa con Enter/Espacio sin programar nada extra; un `<div>` no. Por eso las tarjetas ahora se pueden usar con teclado y lector de pantalla.
+- **Dentro de un `<button>` solo va contenido "en línea"** (`<span>`, `<img>`), no `<div>` ni `<p>`. Para que un `<span>` se comporte como bloque (respete márgenes y padding) se le pone `display: block` en el CSS.
+- **Botones con estilo propio:** un `<button>` trae borde, relleno y fuente por defecto; se resetean con `border: none; padding: 0; font: inherit; color: inherit;`.
+- **Constantes de configuración arriba:** los datos que hay que cambiar (link del CSV, número de WhatsApp) conviene tenerlos juntos al principio, para no buscarlos por todo el código.
+
+### Pendiente
+- Reemplazar `WHATSAPP_NUMERO` por el número real de la dueña.
+- Agregar `og:url` cuando el sitio esté en GitHub Pages.
+- Siguientes tandas de la auditoría: contraste de colores, foco visible, interruptor accesible, modal accesible, mensaje cuando no hay resultados.
+
+---
+
+**Dónde quedamos:** tanda 1 de la auditoría lista (título, Open Graph, constante de WhatsApp, tarjetas como botones seguras). Próximo: número real de WhatsApp y tanda 2 (contraste y foco visible).
