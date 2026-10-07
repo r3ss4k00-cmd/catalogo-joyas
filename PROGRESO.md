@@ -538,3 +538,24 @@ Solo quedan dos avisos: caché y compresión. Dependen del servidor (GitHub Page
 ---
 
 **Dónde quedamos:** cambios de rendimiento hechos y probados, **sin commit**. Próximo: revisar, hacer el commit, publicar y medir la página real. Después, **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
+
+## 07/10/2026 — README para el portfolio
+
+### Cambios de hoy
+- Se creó `README.md` en inglés, pensado para mostrar el proyecto al buscar trabajo remoto.
+- Tiene: el problema real, cómo funciona (con un diagrama), funcionalidades, decisiones técnicas, rendimiento (PageSpeed 100/100/100/100 y la tabla de antes y después), qué aprendí, limitaciones, cómo correrlo y cómo se hizo con Claude Code.
+- Dato corregido: las joyas vendidas **no se borran** de la planilla, quedan con estado "vendida".
+
+### Conceptos que aprendí
+- **README de portfolio:** quien lo lee quiere saber rápido qué problema resuelve, cómo está hecho y por qué se eligió así. Las limitaciones dichas con honestidad suman confianza.
+- **Mermaid:** un diagrama escrito como texto dentro del Markdown. GitHub lo dibuja solo. Ejemplo: `A[Planilla] --> B[fetch]` dibuja dos cajas unidas por una flecha.
+- **`<details>` y `<summary>`:** un bloque que se abre y se cierra al tocarlo. Sirve para acortar el README sin borrar información.
+- **Medir con la herramienta correcta:** la tabla de antes y después es de Lighthouse en la compu; el 100/100/100/100 es de PageSpeed Insights sobre la página publicada. En el README se aclara cuál es cuál.
+
+### Pendiente
+- Agregar capturas al README cuando estén las fotos reales (hay un TODO).
+- Hacer el commit del README.
+
+---
+
+**Dónde quedamos:** README listo, **sin commit**. Próximo: revisarlo en GitHub y, después, **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
