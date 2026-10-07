@@ -19,13 +19,63 @@
        Va dentro del HTML como "data URI": no hace falta un archivo aparte. Los # se escriben %23. -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2324131d'/%3E%3Cpath d='M11 7v18M21.5 7 11.5 17.5M14.5 14.5 22 25' fill='none' stroke='%23d8bf8a' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E">
   <!-- Preconnect: abre la conexión con estos servidores antes de necesitarlos.
-       "crossorigin" va solo donde el pedido es CORS (fuentes y el fetch de la planilla), no en las fotos. -->
+       "crossorigin" va solo donde el pedido es CORS (el fetch de la planilla), no en las fotos.
+       wsrv.nl es el servicio que achica las fotos de ImgBB (ver urlAchicada en el script). -->
   <link rel="preconnect" href="https://docs.google.com" crossorigin>
-  <link rel="preconnect" href="https://i.ibb.co">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://wsrv.nl">
+  <!-- Preload: "esto lo vas a necesitar ya, empezá a bajarlo". Sin esto, el navegador
+       recién descubre las fuentes y el fondo cuando ya leyó todo el CSS.
+       Las fuentes llevan crossorigin siempre (el navegador las pide en modo CORS, aunque sean nuestras).
+       El fondo de la portada es lo más grande que se ve al abrir (el "LCP"): va con prioridad alta. -->
+  <link rel="preload" href="fuentes/bodoni-moda-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fuentes/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fondo.avif" as="image" type="image/avif" fetchpriority="high">
   <style>
+    /* ---------- Fuentes (alojadas en la carpeta fuentes/, ya no en Google Fonts) ---------- */
+
+    /* Son fuentes "variables": un solo archivo trae todos los grosores entre 400 y 500
+       (recortadas a eso, que es lo único que usa la página). Bodoni además trae el eje
+       "opsz": el navegador dibuja el título grande más fino que el texto chico, solo.
+       font-display: swap = mientras baja la fuente, el texto se ve con la de respaldo. */
+    @font-face {
+      font-family: 'Bodoni Moda';
+      src: url('fuentes/bodoni-moda-latin.woff2') format('woff2');
+      font-weight: 400 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Jost';
+      src: url('fuentes/jost-latin.woff2') format('woff2');
+      font-weight: 400 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Fuentes de respaldo "a medida": una fuente del sistema agrandada o achicada
+       (size-adjust) para que ocupe casi lo mismo que la real. Así, cuando llega la
+       fuente real, el texto no salta. Liberation y Tinos/Arimo miden igual que
+       Times New Roman y Arial, por eso sirven los mismos números para todas.
+       (Los números se calcularon comparando las medidas de cada archivo.) */
+    @font-face {
+      font-family: 'Bodoni Moda respaldo';
+      src: local('Times New Roman'), local('Liberation Serif'), local('Tinos');
+      size-adjust: 114.37%;
+      ascent-override: 98.37%;
+      descent-override: 34.97%;
+      line-gap-override: 0%;
+    }
+
+    @font-face {
+      font-family: 'Jost respaldo';
+      src: local('Arial'), local('Liberation Sans'), local('Arimo');
+      size-adjust: 94.84%;
+      ascent-override: 112.82%;
+      descent-override: 39.54%;
+      line-gap-override: 0%;
+    }
+
     /* Paleta de Joyería Kalo (todos los textos pasan WCAG AA, mínimo 5:1) */
     :root {
       --ciruela: #24131d;
@@ -40,8 +90,8 @@
       --oro-texto: #7a5a1e;
       --borde: #e0d3bf;
 
-      --serif: 'Bodoni Moda', Georgia, serif;
-      --sans: 'Jost', system-ui, sans-serif;
+      --serif: 'Bodoni Moda', 'Bodoni Moda respaldo', Georgia, serif;
+      --sans: 'Jost', 'Jost respaldo', system-ui, sans-serif;
 
       /* Curva de movimiento de toda la página: arranca rápido y termina suave */
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -268,6 +318,9 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      /* Los botones llegan con la planilla: se reserva el alto de una fila desde el
+         principio, así la grilla de abajo no salta cuando aparecen */
+      min-height: 44px;
     }
 
     .boton-categoria {
@@ -355,9 +408,24 @@
       margin: 0 auto;
     }
 
-    /* Mensajes de "Cargando…" o de error ocupan todo el ancho */
+    /* Mientras llega la planilla, la grilla ya ocupa una pantalla de alto.
+       Así el pie arranca fuera de la vista y no "salta" cuando aparecen las joyas.
+       (JavaScript le saca la clase .cargando apenas llegan los datos) */
+    .catalogo.cargando {
+      min-height: 100vh;
+    }
+
+    /* Mensaje de error: ocupa todo el ancho */
     .catalogo > p {
       grid-column: 1 / -1;
+      color: var(--gris-ciruela);
+    }
+
+    /* "Cargando joyas…" va en el lugar de los botones de Tipo, no en la grilla:
+       si estuviera abajo, se correría cuando los botones ocupan dos filas (celulares angostos) */
+    .fila-categorias > p {
+      align-self: center;
+      margin: 0;
       color: var(--gris-ciruela);
     }
 
@@ -806,7 +874,9 @@
       </div>
       <div class="grupo-filtro">
         <p class="rotulo-filtro" id="rotuloTipo">Tipo</p>
-        <div class="fila-categorias" id="botonesTipo" role="group" aria-labelledby="rotuloTipo"></div>
+        <!-- "Cargando joyas…" ya viene escrito (se ve desde el primer momento, sin esperar al JavaScript).
+             Cuando llegan los datos, los botones lo reemplazan en el mismo lugar: así nada se corre. -->
+        <div class="fila-categorias" id="botonesTipo" role="group" aria-labelledby="rotuloTipo"><p>Cargando joyas…</p></div>
       </div>
       <div class="grupo-filtro" id="grupoMaterial" hidden>
         <p class="rotulo-filtro" id="rotuloMaterial">Material</p>
@@ -818,7 +888,7 @@
     <h2 class="solo-lectores">Joyas</h2>
     <!-- Aviso invisible: cada vez que cambia su texto, el lector de pantalla lo lee ("3 joyas") -->
     <p class="solo-lectores" id="avisoCatalogo" aria-live="polite"></p>
-    <div class="catalogo" id="catalogo"></div>
+    <div class="catalogo cargando" id="catalogo"></div>
   </main>
 
   <footer class="pie">
@@ -929,9 +999,37 @@
       return limpia;
     }
 
+    // Arma el link de la foto achicada en wsrv.nl, un servicio gratuito que baja la foto
+    // de ImgBB, la achica y la devuelve en WebP (mucho más liviana que la original).
+    //   w / h = ancho / alto en píxeles. Si se pasa alto, fit=cover la recorta cuadrada
+    //           igual que object-fit: cover en la tarjeta (el modal no la recorta).
+    //   we    = "sin agrandar": si la original es más chica, la deja de su tamaño.
+    //   q=75  = calidad (de 1 a 100). 75 casi no se nota y pesa bastante menos.
+    function urlAchicada(original, ancho, alto) {
+      let url = "https://wsrv.nl/?url=" + encodeURIComponent(original) + "&w=" + ancho;
+      if (alto) {
+        url += "&h=" + alto + "&fit=cover";
+      }
+      return url + "&we&output=webp&q=75";
+    }
+
+    // Si una foto falla, se prueba el siguiente escalón:
+    //   1) la achicada (wsrv.nl)  →  2) la original de ImgBB  →  3) "Sin imagen".
+    // Así, si wsrv.nl se cae, las fotos se siguen viendo (aunque pesen más).
     function manejarErrorImagen(img) {
-      if (img.src !== IMAGEN_SIN_FOTO) {
+      const original = img.dataset.original;
+
+      if (original && original !== IMAGEN_SIN_FOTO && !img.dataset.probadoOriginal) {
+        img.dataset.probadoOriginal = "si";
+        // srcset le gana a src: si no se saca, el navegador seguiría pidiendo a wsrv.nl
+        img.removeAttribute("srcset");
+        img.removeAttribute("sizes");
+        img.src = original;
+      } else if (img.src !== IMAGEN_SIN_FOTO) {
         img.src = IMAGEN_SIN_FOTO;
+      } else {
+        // No quedan escalones: se muestra lo que haya, para que no quede invisible
+        img.classList.add("cargada");
       }
     }
 
@@ -974,15 +1072,22 @@
     modalImagen.onload = function () {
       modalImagen.classList.add("cargada");
     };
+    // Si falla, prueba el siguiente escalón (achicada → original → "Sin imagen").
+    // Cada escalón que sí carga dispara onload, y ahí aparece.
     modalImagen.onerror = function () {
       manejarErrorImagen(modalImagen);
-      modalImagen.classList.add("cargada");
     };
 
     function abrirModal(joya, tarjeta) {
       // Se esconde la foto anterior antes de pedir la nueva
       modalImagen.classList.remove("cargada");
-      modalImagen.src = normalizarUrlImagen(joya.imagen);
+
+      // El mismo <img> se usa para todas las joyas: se olvida si ya había probado la original
+      const original = normalizarUrlImagen(joya.imagen);
+      modalImagen.dataset.original = original;
+      delete modalImagen.dataset.probadoOriginal;
+      // En el modal la foto se ve más grande: se pide de hasta 900px de ancho, sin recortar
+      modalImagen.src = original === IMAGEN_SIN_FOTO ? original : urlAchicada(original, 900);
       modalImagen.alt = joya.nombre;
       modalNombre.textContent = joya.nombre;
 
@@ -1103,17 +1208,30 @@
         imagen.onload = function () {
           imagen.classList.add("cargada");
         };
-        // Si falla, se pone "Sin imagen" y también se muestra (si no, quedaría invisible)
+        // Si falla, prueba el siguiente escalón (achicada → original → "Sin imagen")
         imagen.onerror = function () {
           manejarErrorImagen(imagen);
-          imagen.classList.add("cargada");
         };
 
         // loading va antes que src, para que el navegador sepa que puede esperar.
         // Las primeras 4 se ven apenas abre la página: esas se bajan ya ("eager").
         imagen.loading = indice < 4 ? "eager" : "lazy";
         imagen.alt = joya.nombre;
-        imagen.src = normalizarUrlImagen(joya.imagen);
+
+        const original = normalizarUrlImagen(joya.imagen);
+        imagen.dataset.original = original;
+
+        if (original === IMAGEN_SIN_FOTO) {
+          imagen.src = original;
+        } else {
+          // srcset = "estas son las versiones que hay, y su ancho" (400w = 400 píxeles).
+          // sizes = "así de ancha se va a ver la tarjeta" según el tamaño de pantalla.
+          // Con eso el navegador elige solo: un celular común baja la de 400,
+          // uno con pantalla muy nítida (como un iPhone) baja la de 800.
+          imagen.srcset = urlAchicada(original, 400, 400) + " 400w, " + urlAchicada(original, 800, 800) + " 800w";
+          imagen.sizes = "(min-width: 960px) 242px, (min-width: 640px) 31vw, 46vw";
+          imagen.src = urlAchicada(original, 400, 400);
+        }
 
         const info = document.createElement("span");
         info.className = "info";
@@ -1397,8 +1515,6 @@
 
     checkbox.addEventListener("change", actualizarCatalogo);
 
-    contenedor.innerHTML = "<p>Cargando joyas…</p>";
-
     fetch(URL_CSV)
       .then(function (respuesta) {
         if (!respuesta.ok) {
@@ -1407,6 +1523,7 @@
         return respuesta.text();
       })
       .then(function (textoCSV) {
+        contenedor.classList.remove("cargando");
         joyas = csvAJoyas(textoCSV);
         tipos = obtenerValoresUnicos(joyas, "tipo");
 
@@ -1416,6 +1533,9 @@
       })
       .catch(function (error) {
         console.error("Error al cargar las joyas:", error);
+        contenedor.classList.remove("cargando");
+        // Se borra el "Cargando joyas…" de la fila de Tipo y el error va en la grilla
+        contenedorTipos.innerHTML = "";
         contenedor.innerHTML = "<p>No se pudieron cargar las joyas. Probá recargar la página.</p>";
         avisoCatalogo.textContent = "No se pudieron cargar las joyas. Probá recargar la página.";
       });

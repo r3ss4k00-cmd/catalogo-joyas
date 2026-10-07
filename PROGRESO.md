@@ -473,3 +473,68 @@ Lo que más le quita profesionalismo **no es el diseño, es el contenido**:
 ---
 
 **Dónde quedamos:** ajustes del modal (foco y altura de la foto) hechos, probados y subidos a `main`. Próximo: **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
+
+## 07/10/2026 — Rendimiento: de 69 a 100 en Lighthouse (celular)
+
+### Cómo se midió
+- Lighthouse por línea de comandos, modo celular, con el Chromium de `/usr/bin/chromium`. Se hicieron 3 corridas y se tomó la del medio (la mediana).
+- "Antes" y "después" se midieron igual: las dos versiones servidas en la compu.
+- La página publicada (todavía sin estos cambios) dio 67.
+
+| | Antes | Después |
+|---|---|---|
+| Performance | 69 | **100** |
+| Accesibilidad / Buenas prácticas / SEO | 100 / 100 / 100 | 100 / 100 / 100 |
+| Primer dibujo (FCP) | 2,93 s | 0,94 s |
+| Elemento más grande (LCP) | 2,93 s | 1,66 s |
+| Saltos de diseño (CLS) | 0,47 | **0** |
+
+Solo quedan dos avisos: caché y compresión. Dependen del servidor (GitHub Pages ya comprime; la caché no se puede cambiar ahí).
+
+### Cambios de hoy
+- **Fuentes en el repo:** Bodoni Moda y Jost ahora están en la carpeta `fuentes/`, con su licencia OFL al lado. Ya no se usa Google Fonts, que frenaba el primer dibujo casi 2 segundos.
+  - Son las mismas fuentes que mandaba Google, recortadas a los grosores 400–500 (73 KB → 55 KB).
+  - Bodoni conserva el eje `opsz`: el título grande se sigue viendo igual.
+- **Preload:** el `<head>` avisa de entrada que hacen falta las 2 fuentes y `fondo.avif`. El fondo además va con `fetchpriority="high"`.
+- **Nada salta al cargar:**
+  - La fila de botones de Tipo reserva su alto (`min-height: 44px`).
+  - "Cargando joyas…" ahora se muestra en el lugar de esos botones.
+  - Mientras carga, la grilla ocupa una pantalla (`.cargando`). Así el pie arranca fuera de la vista.
+  - Hay fuentes de respaldo con `size-adjust`, para que el cambio a la fuente real no mueva el texto.
+- **Fotos achicadas con wsrv.nl:**
+  - La tarjeta pide la foto cuadrada de 400 px en WebP (85 KB → 22 KB), o la de 800 px en pantallas muy nítidas (`srcset`). El modal pide hasta 900 px.
+  - Si wsrv.nl falla, se usa la foto original de ImgBB. Si esa también falla, se muestra "Sin imagen".
+- **Pruebas:** en Chromium pasaron 56 de 56, a 390 px y 1280 px:
+  - filtros,
+  - el modal con teclado,
+  - la foto con wsrv caído y con wsrv e ImgBB caídos,
+  - la planilla caída.
+
+  Las capturas de antes y después son iguales (solo cambia la compresión de la foto).
+
+### Conceptos que aprendí
+- **Recurso que bloquea el dibujo:** un `<link rel="stylesheet">` en el `<head>` frena todo. El navegador no dibuja nada hasta tener ese CSS, y si viene de otro servidor (Google), primero tiene que conectarse a él.
+- **Preload:** `<link rel="preload">` le dice al navegador "esto lo vas a necesitar, bajalo ya". Sin eso, recién se entera de que existe `fondo.avif` cuando aplica el CSS de la portada.
+  - Las fuentes siempre llevan `crossorigin` en el preload, aunque sean del mismo sitio.
+- **LCP (Largest Contentful Paint):** cuánto tarda en verse lo más grande de la pantalla. Acá es el fondo de la portada, no el título. Se averiguó midiendo, no adivinando.
+- **CLS (Cumulative Layout Shift):** suma cuánto se mueven las cosas que ya estaban en pantalla.
+  - Ejemplo: estás por tocar "Escribime por WhatsApp", llegan las joyas, el botón baja y tocás otra cosa.
+  - Se arregla reservando el lugar antes de que llegue el contenido.
+- **Fuente variable:** un solo archivo con todos los grosores (y en Bodoni, también el "tamaño óptico"), en vez de un archivo por grosor.
+- **`size-adjust`:** agranda o achica una fuente del sistema para que ocupe lo mismo que la fuente real mientras esta baja.
+- **`srcset` y `sizes`:**
+  - `srcset` es la lista de versiones de la foto, con su ancho (`400w`, `800w`).
+  - `sizes` dice qué tan ancha se va a ver la foto en cada pantalla.
+  - Con esos dos datos, el navegador elige solo cuál bajar.
+  - Si hay `srcset`, le gana a `src`: para usar el respaldo hay que sacarlo.
+- **Proxy de imágenes (wsrv.nl):** un servicio que baja la foto, la achica y la manda en otro formato.
+  - Ventaja: pesa mucho menos.
+  - Riesgo: depende de un servicio gratuito de terceros. Por eso tiene respaldo.
+
+### Pendiente
+- Cuando se publique, medir con PageSpeed Insights la página real en GitHub Pages.
+- Si wsrv.nl algún día anda mal o lento, se saca `urlAchicada` y se vuelve a ImgBB directo.
+
+---
+
+**Dónde quedamos:** cambios de rendimiento hechos y probados, **sin commit**. Próximo: revisar, hacer el commit, publicar y medir la página real. Después, **contenido** (fotos reales, número de WhatsApp, usuario de Instagram).
